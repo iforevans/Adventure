@@ -23,12 +23,17 @@ class Game(object):
 
         # Create location 1
         location = Location(1, "You are outside a small, wooden cabin in the woods.")
-        location.SetExits(-1, -1, -1, -1, 0, -1, -1, -1)
+        location.SetExits(-1, -1, 2, -1, 0, -1, -1, -1)
+        self._locations.append(location)
+
+        # Create location 2
+        location = Location(2, "You are on a overgrown north/south path in the woods.")
+        location.SetExits(1, -1, -1, -1, -1, -1, -1, -1)
         self._locations.append(location)
 
     def CreateItems(self):
-        # Bottle
-        item = Item(0, "bottle", "The bottle is half full of water", 1)
+        # Full bottle
+        item = Item(0, "bottle", "The bottle is full of water", 1)
         self._locations[0].DropItem(item)
 
         # Sword

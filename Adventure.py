@@ -14,7 +14,7 @@ class Location(object):
     # Get the description of the location
     def Describe(self):
         # print the location description
-        print(f"{self._description}")
+        print(f"\n{self._description}")
 
         # Any items here?
         if len(self._items) > 0:
@@ -26,11 +26,17 @@ class Location(object):
         print(f"Possible exits are:", end=" ")
         for key in self._exits:
             if self._exits[key] != -1:
-                print(f" {key}")
+                print(f" {key}", end= " ")
+
+        #   Print a blank, seperator line
+        print()
 
     # Move to a new location (if possible)
     def Move(self, direction):
         if direction.lower() in self._exits:
+
+
+
             return self._exits[direction]
         else:
             return -1
