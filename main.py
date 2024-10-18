@@ -1,15 +1,15 @@
-import Adventure
+from Adventure import *
 
 def CreateLocations():
     loc_list = []
 
     # Create location 0
-    location = Adventure.Location(0, "You are inside a cabin in the woods. There is nothing here.")
+    location = Location(0, "You are inside a cabin in the woods. There is nothing here.")
     location.SetExits(-1, -1, -1, -1, -1, 1, -1, -1)
     loc_list.append(location)
 
     # Create location 1
-    location = Adventure.Location(1, "You are outside a small, wooden cabin in the woods.")
+    location = Location(1, "You are outside a small, wooden cabin in the woods.")
     location.SetExits(-1, -1, -1, -1, 0, -1, -1, -1)
     loc_list.append(location)
 
