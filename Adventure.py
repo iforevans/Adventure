@@ -46,20 +46,20 @@ class Location(object):
             return item
     
 class Item(object):
-    def __init__(self, item_id, short_description, long_description, weight):
-        self._item_id = item_id
-        self._short_description = short_description
-        self._long_description = long_description
+    def __init__(self, id, name, description, weight):
+        self._id = id
+        self._name = name
+        self._description = description
         self._weight = weight
 
     def ItemId(self):
-        return self._item_id
+        return self._id
 
-    def LongDescription(self):
-        return self._long_description
+    def Description(self):
+        return self._description
 
-    def ShortDescription(self):
-        return self._short_description
+    def Name(self):
+        return self._name
 
     def Weight(self):
         return self._weight
