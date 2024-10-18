@@ -64,21 +64,29 @@ class Item(object):
     def Weight(self):
         return self._weight
 
-class ParseCommand(object):
-    STATUS_OK = "OK"
-    STATUS_ERROR = "ERROR"
+class Command(object):
+    STATUS_VALID = "VALID"
+    STATUS_INVALID = "INVALID"
 
     def __init__(self, command):
-        _status = ""
-        _verb = ""
-        _noun = ""
+        # Define valid verbs & directions
+        _valid_verbs = ["go", "get", "drop"]
+        _valid_directions = ["north", "east", "south", "west", "in", "out", "up", "down"]
 
-        words = command.split(' ')
-        if len(words) == 2:
-            # Good so far
-            pass
-        else:
-            # Not good
+        # Split the user input into seperate words
+        _words = command.split(' ')
+
+        # We should get two words (verb-noun)
+        if len(_words) == 2:
+            # Do we have a valid verb?
+            if _words[0] in _valid_verbs:
+                _status = STATUS_VALID
+
+        # If we get here, something was not good
+        _status = STATUS_INVALID
+
+
+
             
 
 

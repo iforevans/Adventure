@@ -28,11 +28,11 @@ class Game(object):
 
     def CreateItems(self):
         # Bottle
-        item = Item(0, "A bottle of water", "The bottle is half full.", 1)
+        item = Item(0, "bottle", "The bottle is half full of water", 1)
         self._locations[0].DropItem(item)
 
         # Sword
-        item = Item(1, "A rusty sword.", "The rust is superficial. The sword is actually quite sharp!", 3)
+        item = Item(1, "sword", "A rusty old sword.", 3)
      
         self._locations[1].DropItem(item)
 
@@ -45,6 +45,9 @@ class Game(object):
             self._location = self._locations[self._location_id]
         else:
             print(f"You can't go {command}!")
+
+    def ParseCommand(self, command_str):
+        pass
 
 
     # Main run method
