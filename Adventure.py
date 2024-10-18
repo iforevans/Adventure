@@ -5,7 +5,6 @@ class Location(object):
     def __init__(self, loc_id, description):
         self._description = description
         self._loc_id = loc_id
-        self._exits = {}
 
     def SetExits(self, N, E, S, W, I, O, U, D):
        self._exits = {"north":N, "east":E, "south":S, "west":W, "in":I, "out":O, "up":U, "down":D}
@@ -22,4 +21,13 @@ class Location(object):
             return self._exits[direction]
         else:
             return -1
+
+
+class Item(object):
+    def __init__(self, item_id, short_description, long_description, weight):
+        self._item_id = item_id
+        self._short_description = short_description
+        self._long_description = long_description
+        self._weight = weight
+
 
