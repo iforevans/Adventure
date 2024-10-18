@@ -41,7 +41,7 @@ def main():
 
         # Parse the command (KISS for now)
         if command == "quit":
-            # We're done for now
+            # We're done
             print("You'll be back!")
             dead = True
         else:
