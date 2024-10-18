@@ -5,7 +5,7 @@ class Location(object):
         self._description = description
         self._loc_id = loc_id
         self._exits = {}
-        self._items = []
+        self._items = {}
 
     # Set all the possible exits from this location
     def SetExits(self, N, E, S, W, I, O, U, D):
@@ -27,15 +27,15 @@ class Location(object):
             return -1
 
     # Drop an item at this location
-    def DropItem(self, item_id):
-        self._items.append()
+    def DropItem(self, item):
+        self._items[item.item_id] = item
 
     # Get an item from this location
     def GetItem(self, item_id):
         if item_id in self._items
-            self._items.remove(item_id)
+            item = self._items(item_id)
+            return item
     
-
 
 class Item(object):
     def __init__(self, item_id, short_description, long_description, weight):
