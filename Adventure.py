@@ -20,7 +20,7 @@ class Location(object):
         if len(self._items) > 0:
             print(f"You can see the following items here:", end=" ")
             for key in self._items:
-                print(f" {self._items[key].ShortDescription()}")
+                print(f" {self._items[key].Name()}")
 
         # Print any exits?
         print(f"Possible exits are:", end=" ")
