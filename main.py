@@ -1,11 +1,12 @@
 from Adventure import *
 
-class Main(object):
+class Game(object):
     def __init__(self):
         self._alive = True
         self._locations = []
         self._location_id = 0
         self._location = None
+        self._items = {}
 
         # Create location 0
         location = Location(0, "You are inside a cabin in the woods. There is nothing here.")
@@ -21,7 +22,7 @@ class Main(object):
         self._location = self._locations[self._location_id]
 
     def DoCommand(self, command):
-        # Assume the commnd is a move for now
+        # Assume the command is a move for now
         new_location_id = self._location.Move(command)
         if new_location_id != -1:
             self._location_id = new_location_id
@@ -30,8 +31,8 @@ class Main(object):
             print(f"You can't go {command}!")
 
 
-    # Main func
-    def main(self):
+    # Main run method
+    def run(self):
         while (self._alive):
             # Tell the player where they are
             self._location.Describe()
@@ -48,7 +49,7 @@ class Main(object):
                 self.DoCommand(command)
 
 
-# Call main (lot of use of the word "main" here!)
+# Create Game object and run the game
 if __name__ == "__main__":
-    main = Main()
-    main.main()
+    game = Game()
+    game.run()
