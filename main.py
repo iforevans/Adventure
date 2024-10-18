@@ -17,7 +17,7 @@ class Game(object):
 
     def CreateMap(self):
         # Create location 0
-        location = Location(0, "You are inside a cabin in the woods. There is nothing here.")
+        location = Location(0, "You are inside a cabin in the woods.")
         location.SetExits(-1, -1, -1, -1, -1, 1, -1, -1)
         self._locations.append(location)
 
@@ -33,6 +33,7 @@ class Game(object):
 
         # Sword
         item = Item(1, "A rusty sword.", "The rust is superficial. The sword is actually quite sharp!", 3)
+     
         self._locations[1].DropItem(item)
 
 

@@ -14,6 +14,13 @@ class Location(object):
     # Get the description of the location
     def Describe(self):
         print(f"{self._description}")
+
+        if len(self._items) > 0:
+            print(f"You can see the following items here:", end=" ")
+            for key in self._items:
+                print(f" {self._items[key].ShortDescription()}")
+
+
         print(f"Possible exits are:", end=" ")
         for key in self._exits:
             if self._exits[key] != -1:
