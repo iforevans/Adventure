@@ -13,14 +13,16 @@ class Location(object):
 
     # Get the description of the location
     def Describe(self):
+        # print the location description
         print(f"{self._description}")
 
+        # Any items here?
         if len(self._items) > 0:
             print(f"You can see the following items here:", end=" ")
             for key in self._items:
                 print(f" {self._items[key].ShortDescription()}")
 
-
+        # Print any exits?
         print(f"Possible exits are:", end=" ")
         for key in self._exits:
             if self._exits[key] != -1:
@@ -61,6 +63,27 @@ class Item(object):
 
     def Weight(self):
         return self._weight
+
+class ParseCommand(object):
+    STATUS_OK = "OK"
+    STATUS_ERROR = "ERROR"
+
+    def __init__(self, command):
+        _status = ""
+        _verb = ""
+        _noun = ""
+
+        words = command.split(' ')
+        if len(words) == 2:
+            # Good so far
+            pass
+        else:
+            # Not good
+            
+
+
+
+
 
 
 
