@@ -28,15 +28,14 @@ class Location(object):
 
     # Drop an item at this location
     def DropItem(self, item):
-        self._items[item.item_id] = item
+        self._items[item.ItemId] = item
 
     # Get an item from this location
     def GetItem(self, item_id):
-        if item_id in self._items
+        if item_id in self._items:
             item = self._items(item_id)
             return item
     
-
 class Item(object):
     def __init__(self, item_id, short_description, long_description, weight):
         self._item_id = item_id

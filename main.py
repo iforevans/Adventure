@@ -6,27 +6,14 @@ class Game(object):
         self._locations = []
         self._location_id = 0
         self._location = None
-        self._all_items = {}
         self._rucksack = {}
 
-        # Create the game items
-        self.CreateItems()
-
-        # Create the game map
+        # Create the game map & Items
         self.CreateMap()
+        self.CreateItems()
 
         # Set starting location
         self._location = self._locations[self._location_id]
-
-    def CreateItems(self):
-        # Bottle
-        item = Item(0, "A bottle of water", "The bottle is half full.", 1)
-        self._all_items[0] = item
-
-        # Sword
-        item = Item(1, "A rusty sword.", "The rust is superficial. The sword is actually quite sharp!")
-        self._all_items[1] = item
-
 
     def CreateMap(self):
         # Create location 0
@@ -38,6 +25,15 @@ class Game(object):
         location = Location(1, "You are outside a small, wooden cabin in the woods.")
         location.SetExits(-1, -1, -1, -1, 0, -1, -1, -1)
         self._locations.append(location)
+
+    def CreateItems(self):
+        # Bottle
+        item = Item(0, "A bottle of water", "The bottle is half full.", 1)
+        self._locations[0].DropItem(item)
+
+        # Sword
+        item = Item(1, "A rusty sword.", "The rust is superficial. The sword is actually quite sharp!", 3)
+        self._locations[1].DropItem(item)
 
 
     def DoCommand(self, command):
