@@ -24,164 +24,6 @@ L_TOP_OF_TREE = "top_of_tree"
 L_OVERGROWN_PATH = "overgrown_path"
 L_BOTTOM_OF_WELL = "bottom_of_well"
 
-class Game(object):
-    def __init__(self):
-        # Player attributes
-        self._carried = {}
-        self._alive = True
-
-        # Game attributes
-        self._parser = Parser()
-        self._map = {}
-        self._location = None
-
-        # Create the game map & Items
-        self.CreateMap()
-        self.CreateItems()
-
-        # Set starting location
-        self._location = self._map[L_INSIDE_CABIN]
-
-    def CreateMap(self):
-        # Create Locations. Eventually we will get all this from a map file
-
-        # Inside cabin
-        location = Location(L_INSIDE_CABIN, "You are inside a cabin in the woods.")
-        location.SetExit(D_OUT, L_OUTSIDE_CABIN)
-        self._map[location.Name()] = location
-
-        # Outside cabin
-        location = Location(L_OUTSIDE_CABIN, "You are outside a small, wooden cabin in the woods. There is a tree here that looks climable!")
-        location.SetExit(D_IN, L_INSIDE_CABIN)
-        location.SetExit(D_UP, L_TOP_OF_TREE)
-        location.SetExit(D_SOUTH, L_OVERGROWN_PATH)
-        self._map[location.Name()] = location
-
-        # Top of tree
-        location = Location(L_TOP_OF_TREE, "You are at the very top of a tall tree. The branches are very thin here.")
-        location.SetExit(D_DOWN, L_OUTSIDE_CABIN)
-        self._map[location.Name()] = location
-
-        # Overgrown path
-        location = Location(L_OVERGROWN_PATH, "You are on a overgrown north/south path in the woods. The is what appears to be a deep, dark well here.")
-        location.SetExit(D_DOWN, L_BOTTOM_OF_WELL)
-        location.SetExit(D_NORTH, L_OUTSIDE_CABIN)
-        self._map[location.Name()] = location
-
-        # Bottom of well
-        location = Location(L_BOTTOM_OF_WELL, "You are at the bottom of a very deep, but now dry well. You can just see daylight high overhead.")
-        location.SetExit(D_UP, L_OVERGROWN_PATH)
-        self._map[location.Name()] = location
-
-    def CreateItems(self):
-        # Bottle
-        item = Item("bottle", "The bottle is full of water", W_LIGHT, A_GETABLE)
-        self._map[L_INSIDE_CABIN].DropItem(item)
-        self._parser.AddObject("bottle")
-
-        # Sword
-        item = Item("sword", "A rusty old sword.", W_HEAVY, A_GETABLE)
-        self._map[L_INSIDE_CABIN].DropItem(item)
-        self._parser.AddObject("sword")
-
-        # key
-        item = Item("key", "A small golden key.", W_LIGHT, A_GETABLE)
-        self._map[L_TOP_OF_TREE].DropItem(item)
-        self._parser.AddObject("key")
-
-        # chest
-        item = Item("chest", "A very strong, heavy chest. The chest is locked.", W_VERY_HEAVY, A_NOT_GETABLE)
-        self._map[L_BOTTOM_OF_WELL].DropItem(item)
-        self._parser.AddObject("chest")
-
-    # Move in a valid direction
-    def Go(self, direction):
-        new_location = self._location.Move(direction)
-        if new_location is not None:
-            self._location = self._map[new_location]
-        else:
-            print(f"You can't go {direction}!")
-
-    # Get an item
-    def Get(self, item_name):
-        # Is the requested item present?
-        if self._location.IsPresent(item_name):
-            # Yep, present. Now, is it getable?
-            if self._location.IsGetable(item_name):
-                # Yep, present and getable
-                self._carried[item_name] = self._location.GetItem(item_name)
-                print(f"You picked up the {item_name}")
-            else:
-                # Nope, not getable
-                print(f"You can't get the {item_name}.")
-        else:
-            # Nope, not present
-            print(f"I don't see a {item_name} here!")
-
-    # Drop an item
-    def Drop(self, item_name):
-        # Do we have the item
-        if item_name in self._carried:
-            # Yep, remove from carried and drop in current loc
-            self._location.DropItem(self._carried.pop(item_name))
-            print(f"You dropped the {item_name} here.")
-        else:
-            # Nope, don't have it
-            print(f"You are not carrying the {item_name}!")
-
-    # examine an item
-    def Examine(self, item_name):
-        # Do we have the item
-        if item_name in self._carried:
-            # Yep, print the longer derscription
-            print(f"You examine the {item_name}, and see: {self._carried[item_name].Description()}")
-        elif item_name in self._location._items:
-            # Item is here
-            print(f"You examine the {item_name}, and see: {self._location._items[item_name].Description()}")
-        else:
-            # Nope, don't have it
-            print(f"I don't see the {item_name}, anywhere!")
-
-    def Inventory(self):
-        # List all the items we are carrying
-        if len(self._carried) > 0:
-            print("You are carrying:", end=" ")
-            for item_name in self._carried:
-                print(f"{item_name}", end=" ")
-        else:
-            print("You are not carrying anything!")
-
-    def DoCommand(self, command):
-        # Go command?
-        if command["verb"] == "go":
-            self.Go(command["object"])
-        elif command["verb"] == "get":
-            self.Get(command["object"])
-        elif command["verb"]== "drop":
-            self.Drop(command["object"])
-        elif command["verb"] == "examine":
-            self.Examine(command["object"])
-        elif command["verb"] == "inventory":
-            self.Inventory()
-
-    # Main run method
-    def run(self):
-        while (self._alive):
-            # Tell the player where they are
-            self._location.Describe()
-
-            # What do they want to do?
-            command = self._parser.ParseInput(input("What next? "))
-
-            # Valid command
-            if command["verb"] == None:
-                print("Sorry, I don't understand what you said ...")
-            elif command["verb"] == "quit":
-                print("You'll be back!")
-                self._alive = False
-            else:
-                self.DoCommand(command)
-
 class Location(object):
     def __init__(self, name, description):
         self._name = name
@@ -276,7 +118,26 @@ class Item(object):
     def Getable(self):
         return self._getable
 
-class Parser:
+class Command(object):
+    def __init__(self, verb, obj, prep, target):
+        _verb = verb
+        _obj = obj
+        _prep = prep
+        _target = target
+
+    def GetVerb(self):
+        return self._verb
+
+    def GetObject(self):
+        return self.)obj
+
+    def Get Preposition(self):
+        return self._prep
+
+    def GetTarget(self):
+        return self._target
+
+class Parser(object):
     def __init__(self):
         # Valid verbs
         self._verbs = [
@@ -332,3 +193,163 @@ class Parser:
             'preposition': prep,
             'target': target
         }
+
+# This is the main game object!
+class Game(object):
+    def __init__(self):
+        # Player attributes
+        self._carried = {}
+        self._alive = True
+
+        # Game attributes
+        self._parser = Parser()
+        self._map = {}
+        self._location = None
+
+        # Create the game map & Items
+        self.CreateMap()
+        self.CreateItems()
+
+        # Set starting location
+        self._location = self._map[L_INSIDE_CABIN]
+
+    def CreateMap(self):
+        # Create Locations. Eventually we will get all this from a map file
+
+        # Inside cabin
+        location = Location(L_INSIDE_CABIN, "You are inside a cabin in the woods.")
+        location.SetExit(D_OUT, L_OUTSIDE_CABIN)
+        self._map[location.Name()] = location
+
+        # Outside cabin
+        location = Location(L_OUTSIDE_CABIN, "You are outside a small, wooden cabin in the woods. There is a tree here that looks climable!")
+        location.SetExit(D_IN, L_INSIDE_CABIN)
+        location.SetExit(D_UP, L_TOP_OF_TREE)
+        location.SetExit(D_SOUTH, L_OVERGROWN_PATH)
+        self._map[location.Name()] = location
+
+        # Top of tree
+        location = Location(L_TOP_OF_TREE, "You are at the very top of a tall tree. The branches are very thin here.")
+        location.SetExit(D_DOWN, L_OUTSIDE_CABIN)
+        self._map[location.Name()] = location
+
+        # Overgrown path
+        location = Location(L_OVERGROWN_PATH, "You are on a overgrown north/south path in the woods. The is what appears to be a deep, dark well here.")
+        location.SetExit(D_DOWN, L_BOTTOM_OF_WELL)
+        location.SetExit(D_NORTH, L_OUTSIDE_CABIN)
+        self._map[location.Name()] = location
+
+        # Bottom of well
+        location = Location(L_BOTTOM_OF_WELL, "You are at the bottom of a very deep, but now dry well. You can just see daylight high overhead.")
+        location.SetExit(D_UP, L_OVERGROWN_PATH)
+        self._map[location.Name()] = location
+
+    def CreateItems(self):
+        # Bottle
+        item = Item("bottle", "The bottle is full of water", W_LIGHT, A_GETABLE)
+        self._map[L_INSIDE_CABIN].DropItem(item)
+        self._parser.AddObject("bottle")
+
+        # Sword
+        item = Item("sword", "A rusty old sword.", W_HEAVY, A_GETABLE)
+        self._map[L_INSIDE_CABIN].DropItem(item)
+        self._parser.AddObject("sword")
+
+        # key
+        item = Item("key", "A small golden key.", W_LIGHT, A_GETABLE)
+        self._map[L_TOP_OF_TREE].DropItem(item)
+        self._parser.AddObject("key")
+
+        # chest
+        item = Item("chest", "A very strong, heavy chest. The chest is locked and too heavy to move.", W_VERY_HEAVY, A_NOT_GETABLE)
+        self._map[L_BOTTOM_OF_WELL].DropItem(item)
+        self._parser.AddObject("chest")
+
+    # Move in a valid direction
+    def Go(self, direction):
+        new_location = self._location.Move(direction)
+        if new_location is not None:
+            self._location = self._map[new_location]
+        else:
+            print(f"You can't go {direction}!")
+
+    # Get an item
+    def Get(self, item_name):
+        # Is the requested item present?
+        if self._location.IsPresent(item_name):
+            # Yep, present. Now, is it getable?
+            if self._location.IsGetable(item_name):
+                # Yep, present and getable
+                self._carried[item_name] = self._location.GetItem(item_name)
+                print(f"You picked up the {item_name}")
+            else:
+                # Nope, not getable
+                print(f"You can't get the {item_name}.")
+        else:
+            # Nope, not present
+            print(f"I don't see a {item_name} here!")
+
+    # Drop an item
+    def Drop(self, item_name):
+        # Do we have the item
+        if item_name in self._carried:
+            # Yep, remove from carried and drop in current loc
+            self._location.DropItem(self._carried.pop(item_name))
+            print(f"You dropped the {item_name} here.")
+        else:
+            # Nope, don't have it
+            print(f"You are not carrying the {item_name}!")
+
+    # examine an item
+    def Examine(self, item_name):
+        # Do we have the item
+        if item_name in self._carried:
+            # Yep, print the longer derscription
+            print(f"You examine the {item_name}, and see: {self._carried[item_name].Description()}")
+        elif item_name in self._location._items:
+            # Item is here
+            print(f"You examine the {item_name}, and see: {self._location._items[item_name].Description()}")
+        else:
+            # Nope, don't have it
+            print(f"I don't see the {item_name}, anywhere!")
+
+    def Inventory(self):
+        # List all the items we are carrying
+        if len(self._carried) > 0:
+            print("You are carrying:", end=" ")
+            for item_name in self._carried:
+                print(f"{item_name}", end=" ")
+        else:
+            print("You are not carrying anything!")
+
+    def DoCommand(self, command):
+        # Go command?
+        if command["verb"] == "go":
+            self.Go(command["object"])
+        elif command["verb"] == "get":
+            self.Get(command["object"])
+        elif command["verb"]== "drop":
+            self.Drop(command["object"])
+        elif command["verb"] == "examine":
+            self.Examine(command["object"])
+        elif command["verb"] == "inventory":
+            self.Inventory()
+
+    # Main run method
+    def run(self):
+        while (self._alive):
+            # Tell the player where they are
+            self._location.Describe()
+
+            # What do they want to do?
+            command = self._parser.ParseInput(input("What next? "))
+
+            # Valid command
+            if command["verb"] == None:
+                print("Sorry, I don't understand what you said ...")
+            elif command["verb"] == "quit":
+                print("You'll be back!")
+                self._alive = False
+            else:
+                self.DoCommand(command)
+
