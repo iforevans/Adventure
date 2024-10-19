@@ -62,8 +62,15 @@ class Game(object):
             print(f"I don't a {item_name} here!")
 
     # Drop an item
-    def Drop(self, command):
-        pass
+    def Drop(self, item_name):
+        # Do we have the item
+        if item_name in self._carried:
+            # Yep, remove from carried and drop in current loc
+            self._location.DropItem(self._carried.pop(item_name))
+            print(f"You dropped the {item_name} here.")
+        else:
+            # Nope, don't have it
+            print(f"You are not carrying the {item_name}!")
 
     def DoCommand(self, command):
         # Go command?
@@ -72,7 +79,7 @@ class Game(object):
         elif command.GetVerb() == "get":
             self.Get(command.GetNoun())
         elif command.GetVerb() == "drop":
-            print("DROP")
+            self.Drop(command.GetNoun())
 
     # Main run method
     def run(self):

@@ -20,7 +20,11 @@ class Location(object):
         if len(self._items) > 0:
             print(f"You can see the following items here:", end=" ")
             for key in self._items:
-                print(f" {self._items[key].Name()}")
+                print(f" {self._items[key].Name()}", end=" ")
+
+            #   Print a blank, seperator line
+            print()
+ 
 
         # Print any exits?
         print(f"Possible exits are:", end=" ")
@@ -44,9 +48,12 @@ class Location(object):
 
     # Get an item from this location
     def GetItem(self, item_name):
+        # Is the item here?
         if item_name in self._items:
+            # Yep, remove from the location and return it
             return self._items.pop(item_name)
         else:
+            # Nope, not here
             return None
     
 class Item(object):
