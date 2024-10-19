@@ -294,7 +294,7 @@ class Parser:
             'through', 'over', 'under', 'behind', 'toward'
         ]
 
-        # You can update this list dynamically based on the game state
+        # This should be added to as objects are created
         self._objects = []
 
     # Add an object to our objects list
