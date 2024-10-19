@@ -1,7 +1,11 @@
 # Constants - weights
 W_LIGHT = 1
 W_HEAVY = 2
-W_IMMOVABLE = 3
+W_VERY_HEAVY = 3
+
+# Constants - attributes
+A_GETABLE = True
+A_NOT_GETABLE = False
 
 # Constants - directions
 D_NORTH = "north"
@@ -70,21 +74,20 @@ class Game(object):
 
     def CreateItems(self):
         # Bottle
-        item = Item("bottle", "The bottle is full of water", W_LIGHT)
+        item = Item("bottle", "The bottle is full of water", W_LIGHT, A_GETABLE)
         self._map[L_INSIDE_CABIN].DropItem(item)
 
         # Sword
-        item = Item("sword", "A rusty old sword.", W_HEAVY)
+        item = Item("sword", "A rusty old sword.", W_HEAVY, A_GETABLE)
         self._map[L_INSIDE_CABIN].DropItem(item)
 
         # key
-        item = Item("key", "A small golden key.", W_LIGHT)
+        item = Item("key", "A small golden key.", W_LIGHT, A_GETABLE)
         self._map[L_TOP_OF_TREE].DropItem(item)
 
         # chest
-        item = Item("chest", "A very strong, heavy chest. The chest is locked.", W_IMMOVABLE)
+        item = Item("chest", "A very strong, heavy chest. The chest is locked.", W_VERY_HEAVY, A_NOT_GETABLE)
         self._map[L_BOTTOM_OF_WELL].DropItem(item)
-
 
     # Move in a valid direction
     def Go(self, direction):
@@ -96,16 +99,18 @@ class Game(object):
 
     # Get an item
     def Get(self, item_name):
-        # Get the Item
-        item = self._location.GetItem(item_name)
-
-        # Get it?
-        if item is not None:
-            # Yep, add it to carried dict
-            self._carried[item.Name()] = item
-            print(f"You picked up the {item.Name()}")
+        # Is the requested item present?
+        if self._location.IsPresent(item_name):
+            # Yep, present. Now, is it getable?
+            if self._location.IsGetable(item_name):
+                # Yep, present and getable
+                self._carried[item_name] = self._location.GetItem(item_name)
+                print(f"You picked up the {item_name}")
+            else:
+                # Nope, not getable
+                print(f"You can't get the {item_name}.")
         else:
-            # Nope
+            # Nope, not present
             print(f"I don't see a {item_name} here!")
 
     # Drop an item
@@ -221,31 +226,35 @@ class Location(object):
     def DropItem(self, item):
         self._items[item.Name()] = item
 
-    def IsMovable(self, item):
+    def IsPresent(self, item_name):
         # Is the item here?
         if item_name in self._items:
-            # Yep, is it movable?
-            if self._items[item_name].Weight() != W_IMMOVABLE:
-                return True
+            # Yep, it is
+            return True
 
         # Nope, not here
-        return None
+        return False
+
+    def IsGetable(self, item_name):
+        # First, is it even here?
+        if item_name in self._items:
+            # Yep, now, is it getable?
+            return self._items[item_name].Getable()
+
+        # Nope, 
+        return False
 
     # Get an item from this location
     def GetItem(self, item_name):
-        # Is the item here?
-        if item_name in self._items:
-            # Yep, remove from the location and return it
-            return self._items.pop(item_name)
-        else:
-            # Nope, not here
-            return None
-    
+        # Remove the item from this location and return
+        return self._items.pop(item_name)
+
 class Item(object):
-    def __init__(self, name, description, weight):
+    def __init__(self, name, description, weight, getable):
         self._name = name
         self._description = description
         self._weight = weight
+        self._getable = getable
 
     def Description(self):
         return self._description
@@ -255,6 +264,10 @@ class Item(object):
 
     def Weight(self):
         return self._weight
+
+    def Getable(self):
+        return self._getable
+
 
 class Command(object):
     def __init__(self, command):
