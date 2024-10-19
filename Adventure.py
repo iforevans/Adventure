@@ -320,3 +320,53 @@ class Command(object):
             return self._command["noun"]
         else:
             return None
+
+class InputParser:
+    def __init__(self):
+        self.verbs = [
+            'go', 'move', 'walk', 'take', 'pick', 'grab', 'drop', 'use',
+            'look', 'examine', 'open', 'close', 'attack', 'fight',
+            'inventory', 'help', 'quit'
+        ]
+        self.directions = [
+            'north', 'south', 'east', 'west', 'up', 'down', 'left', 'right',
+            'forward', 'backward'
+        ]
+        self.prepositions = [
+            'at', 'on', 'in', 'with', 'to', 'from', 'into', 'onto',
+            'through', 'over', 'under', 'behind', 'toward'
+        ]
+        # You can update this list dynamically based on the game state
+        self.objects = [
+            'door', 'key', 'sword', 'shield', 'monster', 'chest', 'map',
+            'room', 'window', 'book', 'table', 'chair', 'potion'
+        ]
+
+    def parse_input(self, user_input):
+        tokens = user_input.lower().split()
+        verb = None
+        obj = None
+        prep = None
+        target = None
+
+        # Parsing logic
+        idx = 0
+        while idx < len(tokens):
+            word = tokens[idx]
+            if not verb and word in self.verbs:
+                verb = word
+            elif not obj and (word in self.objects or word in self.directions):
+                obj = word
+            elif not prep and word in self.prepositions:
+                prep = word
+            elif prep and not target and (word in self.objects or word in self.directions):
+                target = word
+            idx += 1
+
+        return {
+            'verb': verb,
+            'object': obj,
+            'preposition': prep,
+            'target': target
+        }
+
