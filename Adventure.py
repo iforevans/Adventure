@@ -73,7 +73,7 @@ class Command(object):
         self._valid = False
 
         # Define valid verbs & directions
-        self._valid_verbs = ["go", "get", "drop", "quit"]
+        self._valid_verbs = ["go", "get", "drop", "examine", "quit"]
         self._valid_directions = ["north", "east", "south", "west", "in", "out", "up", "down"]
 
         # To hold our parsed command
@@ -95,7 +95,6 @@ class Command(object):
             self._command["verb"] = self._words[0]
             self._command["noun"] = ""
             self._valid = True
-
 
     # Return our status
     def IsValid(self):

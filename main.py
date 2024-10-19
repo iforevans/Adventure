@@ -38,7 +38,6 @@ class Game(object):
 
         # Sword
         item = Item(1, "sword", "A rusty old sword.", 3)
-     
         self._locations[1].DropItem(item)
 
 
@@ -50,9 +49,6 @@ class Game(object):
             self._location = self._locations[self._location_id]
         else:
             print(f"You can't go {command.GetNoun()}!")
-
-    def ParseCommand(self, command_str):
-        pass
 
 
     # Main run method
