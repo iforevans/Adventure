@@ -2,10 +2,13 @@
 
 class Game(object):
     def __init__(self):
+        # Player attributes
+        self._carried = {}
         self._alive = True
+
+        # Game attributes
         self._map = []
         self._location = None
-        self._carried = {}
 
         # Create the game map & Items
         self.CreateMap()
@@ -87,6 +90,15 @@ class Game(object):
             # Nope, don't have it
             print(f"You are not carrying the {item_name}, so you can't examine it!")
 
+    def Inventory(self):
+        # List all the items we are carrying
+        if len(self._carried) > 0:
+            print("You are carrying: ", end=" ")
+            for item_name in self._carried:
+                print(f"{item_name} ")
+        else:
+            print("You are not carrying anything!")
+
     def DoCommand(self, command):
         # Go command?
         if command.GetVerb() == "go":
@@ -97,6 +109,8 @@ class Game(object):
             self.Drop(command.GetNoun())
         elif command.GetVerb() == "examine":
             self.Examine(command.GetNoun())
+        elif command.GetVerb() == "inventory":
+            self.Inventory()
 
     # Main run method
     def run(self):
@@ -117,9 +131,9 @@ class Game(object):
                     self.DoCommand(command)
 
 class Location(object):
-    def __init__(self, loc_id, description):
-        self._description = description
+    def __init__(self,loc_id, description):
         self._loc_id = loc_id
+        self._description = description
         self._exits = {}
         self._items = {}
 
@@ -192,7 +206,7 @@ class Command(object):
         self._valid = False
 
         # Define valid verbs & directions
-        self._valid_verbs = ["go", "get", "drop", "examine", "quit"]
+        self._valid_verbs = ["go", "get", "drop", "examine", "inventory", "quit"]
         self._valid_directions = ["north", "east", "south", "west", "in", "out", "up", "down"]
 
         # To hold our parsed command
@@ -210,6 +224,11 @@ class Command(object):
                 self._command["noun"] = self._words[1]
                 self._valid = True
         elif len(self._words) == 1 and self._words[0] == "quit":
+            # Valid quit command
+            self._command["verb"] = self._words[0]
+            self._command["noun"] = ""
+            self._valid = True
+        elif len(self._words) == 1 and self._words[0] == "inventory":
             # Valid quit command
             self._command["verb"] = self._words[0]
             self._command["noun"] = ""
