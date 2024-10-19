@@ -34,7 +34,7 @@ class Game(object):
         self._map.append(location)
 
         # Create location 3
-        location = Location(3, "You are at the bottom of a very deep well. You can just see daylight overhead.")
+        location = Location(3, "You are at the bottom of a very deep, but now dry well. You can just see daylight overhead.")
         location.SetExits(-1, -1, -1, -1, -1, -1, 2, -1)
         self._map.append(location)
 
