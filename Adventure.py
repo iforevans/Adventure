@@ -1,4 +1,18 @@
-# This module will hold most of our classes
+# Constants - directions
+D_NORTH = "north"
+D_EAST = "east"
+D_SOUTH = "south"
+D_WEST = "west"
+D_IN = "in"
+D_OUT = "out"
+D_UP = "up"
+D_DOWN = "down"
+
+# Constants - location names
+L_INSIDE_CABIN = "inside_cabin"
+L_OUTSIDE_CABIN = "outside_cabin"
+L_OVERGROWN_PATH = "overgrown_path"
+L_BOTTOM_OF_WELL = "bottom_of_well"
 
 class Game(object):
     def __init__(self):
@@ -7,7 +21,7 @@ class Game(object):
         self._alive = True
 
         # Game attributes
-        self._map = []
+        self._map = {}
         self._location = None
 
         # Create the game map & Items
@@ -18,40 +32,42 @@ class Game(object):
         self._location = self._map[0]
 
     def CreateMap(self):
-        # Create location 0
-        location = Location(0, "You are inside a cabin in the woods.")
-        location.SetExits(-1, -1, -1, -1, -1, 1, -1, -1)
-        self._map.append(location)
+        # Create Locations. Eventually we will get all this from a map file
+        location = Location(L_INSIDE_CABIN, "You are inside a cabin in the woods.")
+        location.SetExit(D_OUT, L_OUTSIDE_CABIN)
+        self._map[location.Name] = location
 
-        # Create location 1
-        location = Location(1, "You are outside a small, wooden cabin in the woods. There is a tree here that looks climable!")
-        location.SetExits(-1, -1, 2, -1, 0, -1, -1, -1)
-        self._map.append(location)
+        # Outside cabin
+        location = Location(L_OUTSIDE_CABIN, "You are outside a small, wooden cabin in the woods. There is a tree here that looks climable!")
+        location.SetExit(D_IN, L_INSIDE_CABIN)
+        location.SetExit(D_SOUTH, L_OVERGROWN_PATH)
+        self._map[location.Name] = location
 
-        # Create location 2
-        location = Location(2, "You are on a overgrown north/south path in the woods. The is what appears to be a deep, dark well here.")
-        location.SetExits(1, -1, -1, -1, -1, -1, -1, 3)
-        self._map.append(location)
+        # Overgrown path
+        location = Location(L_OVERGROWN_PATH, "You are on a overgrown north/south path in the woods. The is what appears to be a deep, dark well here.")
+        location.SetExit(D_DOWN, L_BOTTOM_OF_WELL)
+        location.SetExit(D_NORTH, L_OUTSIDE_CABIN)
+        self._map[location.Name] = location
 
-        # Create location 3
-        location = Location(3, "You are at the bottom of a very deep, but now dry well. You can just see daylight overhead.")
-        location.SetExits(-1, -1, -1, -1, -1, -1, 2, -1)
-        self._map.append(location)
+        # Bottom of well
+        location = Location(L_BOTTOM_OF_WELL, "You are at the bottom of a very deep, but now dry well. You can just see daylight overhead.")
+        location.SetExit(D_UP, L_OVERGROWN_PATH)
+        self._map[location.Name] = location
 
     def CreateItems(self):
         # Bottle
         item = Item("bottle", "The bottle is full of water", 1)
-        self._map[0].DropItem(item)
+        self._map[L_INSIDE_CABIN].DropItem(item)
 
         # Sword
         item = Item("sword", "A rusty old sword.", 3)
-        self._map[1].DropItem(item)
+        self._map[L_BOTTOM_OF_WELL].DropItem(item)
 
     # Move in a valid direction
-    def Move(self, direction):
-        new_location_id = self._location.Move(direction)
-        if new_location_id != -1:
-            self._location = self._map[new_location_id]
+    def Go(self, direction):
+        new_location = self._location.Move(direction)
+        if new_location is not None:
+            self._location = self._map[new_location]
         else:
             print(f"You can't go {direction}!")
 
@@ -102,7 +118,7 @@ class Game(object):
     def DoCommand(self, command):
         # Go command?
         if command.GetVerb() == "go":
-            self.Move(command.GetNoun())
+            self.Go(command.GetNoun())
         elif command.GetVerb() == "get":
             self.Get(command.GetNoun())
         elif command.GetVerb() == "drop":
@@ -131,15 +147,15 @@ class Game(object):
                     self.DoCommand(command)
 
 class Location(object):
-    def __init__(self,loc_id, description):
-        self._loc_id = loc_id
+    def __init__(self,name, description):
+        self._name = name
         self._description = description
         self._exits = {}
         self._items = {}
 
-    # Set all the possible exits from this location
-    def SetExits(self, N, E, S, W, I, O, U, D):
-       self._exits = {"north":N, "east":E, "south":S, "west":W, "in":I, "out":O, "up":U, "down":D}
+    # Set an exit from this location
+    def SetExit(self, direction, name):
+        self._exits[direction] = name
 
     # Get the description of the location
     def Describe(self):
@@ -155,21 +171,28 @@ class Location(object):
             #   Print a blank, seperator line
             print()
  
-        # Print any exits?
-        print(f"Possible exits are:", end=" ")
-        for key in self._exits:
-            if self._exits[key] != -1:
-                print(f" {key}", end= " ")
+        # Any exits?
+        if len(self._exits) > 0:
+            print(f"Possible exits are:", end=" ")
+            for key in self._exits:
+                if self._exits[key] != -1:
+                    print(f" {key}", end= " ")
 
-        #   Print a blank, seperator line
-        print()
+            #   Print a blank, seperator line
+            print()
+        else:
+            print("Uh ho. There doesn't seem to be any way out of here!")
+
+    # Get the location name
+    def Name(self):
+        return self._name
 
     # Move to a new location (if possible)
     def Move(self, direction):
         if direction.lower() in self._exits:
             return self._exits[direction]
         else:
-            return -1
+            return None
 
     # Drop an item at this location
     def DropItem(self, item):
@@ -251,15 +274,3 @@ class Command(object):
             return self._command["noun"]
         else:
             return None
-
-
-
-
-
-
-
-
-
-
-
-
