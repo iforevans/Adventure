@@ -1,3 +1,8 @@
+# Constants - weights
+W_LIGHT = 1
+W_HEAVY = 2
+W_IMMOVABLE = 3
+
 # Constants - directions
 D_NORTH = "north"
 D_EAST = "east"
@@ -11,6 +16,7 @@ D_DOWN = "down"
 # Constants - location names
 L_INSIDE_CABIN = "inside_cabin"
 L_OUTSIDE_CABIN = "outside_cabin"
+L_TOP_OF_TREE = "top_of_tree"
 L_OVERGROWN_PATH = "overgrown_path"
 L_BOTTOM_OF_WELL = "bottom_of_well"
 
@@ -42,7 +48,13 @@ class Game(object):
         # Outside cabin
         location = Location(L_OUTSIDE_CABIN, "You are outside a small, wooden cabin in the woods. There is a tree here that looks climable!")
         location.SetExit(D_IN, L_INSIDE_CABIN)
+        location.SetExit(D_UP, L_TOP_OF_TREE)
         location.SetExit(D_SOUTH, L_OVERGROWN_PATH)
+        self._map[location.Name()] = location
+
+        # Top of tree
+        location = Location(L_TOP_OF_TREE, "You are at the very top of a tall tree. The branches are very thin here.")
+        location.SetExit(D_DOWN, L_OUTSIDE_CABIN)
         self._map[location.Name()] = location
 
         # Overgrown path
@@ -52,18 +64,27 @@ class Game(object):
         self._map[location.Name()] = location
 
         # Bottom of well
-        location = Location(L_BOTTOM_OF_WELL, "You are at the bottom of a very deep, but now dry well. You can just see daylight overhead.")
+        location = Location(L_BOTTOM_OF_WELL, "You are at the bottom of a very deep, but now dry well. You can just see daylight high overhead.")
         location.SetExit(D_UP, L_OVERGROWN_PATH)
         self._map[location.Name()] = location
 
     def CreateItems(self):
         # Bottle
-        item = Item("bottle", "The bottle is full of water", 1)
+        item = Item("bottle", "The bottle is full of water", W_LIGHT)
         self._map[L_INSIDE_CABIN].DropItem(item)
 
         # Sword
-        item = Item("sword", "A rusty old sword.", 3)
+        item = Item("sword", "A rusty old sword.", W_HEAVY)
+        self._map[L_INSIDE_CABIN].DropItem(item)
+
+        # key
+        item = Item("key", "A small golden key.", W_LIGHT)
+        self._map[L_TOP_OF_TREE].DropItem(item)
+
+        # chest
+        item = Item("chest", "A very strong, heavy chest. The chest is locked.", W_IMMOVABLE)
         self._map[L_BOTTOM_OF_WELL].DropItem(item)
+
 
     # Move in a valid direction
     def Go(self, direction):
@@ -85,7 +106,7 @@ class Game(object):
             print(f"You picked up the {item.Name()}")
         else:
             # Nope
-            print(f"I don't a {item_name} here!")
+            print(f"I don't see a {item_name} here!")
 
     # Drop an item
     def Drop(self, item_name):
@@ -199,6 +220,16 @@ class Location(object):
     # Drop an item at this location
     def DropItem(self, item):
         self._items[item.Name()] = item
+
+    def IsMovable(self, item):
+        # Is the item here?
+        if item_name in self._items:
+            # Yep, is it movable?
+            if self._items[item_name].Weight() != W_IMMOVABLE:
+                return True
+
+        # Nope, not here
+        return None
 
     # Get an item from this location
     def GetItem(self, item_name):
