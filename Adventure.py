@@ -31,7 +31,7 @@ class Game(object):
         self._alive = True
 
         # Game attributes
-        self._parser = InputParser()
+        self._parser = Parser()
         self._map = {}
         self._location = None
 
@@ -273,7 +273,7 @@ class Item(object):
     def Getable(self):
         return self._getable
 
-class InputParser:
+class Parser:
     def __init__(self):
         # Valid verbs
         self._verbs = [
