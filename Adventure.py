@@ -145,15 +145,15 @@ class Game(object):
 
     def DoCommand(self, command):
         # Go command?
-        if command.GetVerb() == "go":
-            self.Go(command.GetNoun())
-        elif command.GetVerb() == "get":
-            self.Get(command.GetNoun())
-        elif command.GetVerb() == "drop":
-            self.Drop(command.GetNoun())
-        elif command.GetVerb() == "examine":
-            self.Examine(command.GetNoun())
-        elif command.GetVerb() == "inventory":
+        if command["verb"] == "go":
+            self.Go(command["object"])
+        elif command["verb"] == "get":
+            self.Get(command["object"])
+        elif command["verb"]== "drop":
+            self.Drop(command["object"])
+        elif command["verb"] == "examine":
+            self.Examine(command["object"])
+        elif command["verb"] == "inventory":
             self.Inventory()
 
     # Main run method
@@ -166,19 +166,16 @@ class Game(object):
             self._location.Describe()
 
             # What do they want to do?
-            # command = Command(input("What next? "))
             command = parser.ParseInput(input("What next? "))
-            print(command)
-            exit(0)
 
             # Valid command
-            if command.IsValid():
-                if command.GetVerb() == "quit":
-                    # We're done
-                    print("You'll be back!")
-                    self._alive = False
-                else:
-                    self.DoCommand(command)
+            if command["verb"] == None:
+                print("Sorry, I don't understand what you said ...")
+            elif command["verb"] == "quit":
+                print("You'll be back!")
+                self._alive = False
+            else:
+                self.DoCommand(command)
 
 class Location(object):
     def __init__(self, name, description):
