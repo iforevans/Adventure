@@ -34,9 +34,6 @@ class Location(object):
     # Move to a new location (if possible)
     def Move(self, direction):
         if direction.lower() in self._exits:
-
-
-
             return self._exits[direction]
         else:
             return -1
