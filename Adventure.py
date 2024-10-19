@@ -68,29 +68,55 @@ class Item(object):
         return self._weight
 
 class Command(object):
-    STATUS_VALID = "VALID"
-    STATUS_INVALID = "INVALID"
-
     def __init__(self, command):
+        # Default status of invalid
+        self._valid = False
+
         # Define valid verbs & directions
-        _valid_verbs = ["go", "get", "drop"]
-        _valid_directions = ["north", "east", "south", "west", "in", "out", "up", "down"]
+        self._valid_verbs = ["go", "get", "drop", "quit"]
+        self._valid_directions = ["north", "east", "south", "west", "in", "out", "up", "down"]
+
+        # To hold our parsed command
+        self._command = {}
 
         # Split the user input into seperate words
-        _words = command.split(' ')
+        self._words = command.split(' ')
 
         # We should get two words (verb-noun)
-        if len(_words) == 2:
+        if len(self._words) == 2:
             # Do we have a valid verb?
-            if _words[0] in _valid_verbs:
-                _status = STATUS_VALID
+            if self._words[0] in self._valid_verbs:
+                # Yep, save the nound and ver to our command dict
+                self._command["verb"] = self._words[0]
+                self._command["noun"] = self._words[1]
+                self._valid = True
+        elif len(self._words) == 1 and self._words[0] == "quit":
+            # Valid quit command
+            self._command["verb"] = self._words[0]
+            self._command["noun"] = ""
+            self._valid = True
 
-        # If we get here, something was not good
-        _status = STATUS_INVALID
+
+    # Return our status
+    def IsValid(self):
+        return self._valid
+
+    # Get the verb
+    def GetVerb(self):
+        if self._valid:
+            return self._command["verb"]
+        else:
+            return None
+
+    # Get the noun
+    def GetNoun(self):
+        if self._valid:
+            return self._command["noun"]
+        else:
+            return None
 
 
 
-            
 
 
 

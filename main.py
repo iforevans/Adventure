@@ -44,12 +44,12 @@ class Game(object):
 
     def DoCommand(self, command):
         # Assume the command is a move for now
-        new_location_id = self._location.Move(command)
+        new_location_id = self._location.Move(command.GetNoun())
         if new_location_id != -1:
             self._location_id = new_location_id
             self._location = self._locations[self._location_id]
         else:
-            print(f"You can't go {command}!")
+            print(f"You can't go {command.GetNoun()}!")
 
     def ParseCommand(self, command_str):
         pass
@@ -62,15 +62,16 @@ class Game(object):
             self._location.Describe()
 
             # What do they want to do?
-            command = input("What next? ")
+            command = Command(input("What next? "))
 
-            # Parse the command (KISS for now)
-            if command == "quit":
-                # We're done
-                print("You'll be back!")
-                self._alive = False
-            else:
-                self.DoCommand(command)
+            # Valid command
+            if command.IsValid():
+                if command.GetVerb() == "quit":
+                    # We're done
+                    print("You'll be back!")
+                    self._alive = False
+                else:
+                    self.DoCommand(command)
 
 
 # Create Game object and run the game
