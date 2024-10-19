@@ -49,8 +49,17 @@ class Game(object):
 
     # Get an item
     def Get(self, item_name):
-        item = self._location.GetItem
-        pass
+        # Get the Item
+        item = self._location.GetItem(item_name)
+
+        # Get it?
+        if item is not None:
+            # Yep, add it to carried dict
+            self._carried[item.Name()] = item
+            print(f"You picked up the {item.Name()}")
+        else:
+            # Nope
+            print(f"I don't a {item_name} here!")
 
     # Drop an item
     def Drop(self, command):
@@ -61,7 +70,7 @@ class Game(object):
         if command.GetVerb() == "go":
             self.Move(command.GetNoun())
         elif command.GetVerb() == "get":
-            self.Get(command)
+            self.Get(command.GetNoun())
         elif command.GetVerb() == "drop":
             print("DROP")
 
