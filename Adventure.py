@@ -158,12 +158,18 @@ class Game(object):
 
     # Main run method
     def run(self):
+        # Create our parser
+        parser = InputParser()
+
         while (self._alive):
             # Tell the player where they are
             self._location.Describe()
 
             # What do they want to do?
-            command = Command(input("What next? "))
+            # command = Command(input("What next? "))
+            command = parser.ParseInput(input("What next? "))
+            print(command)
+            exit(0)
 
             # Valid command
             if command.IsValid():
@@ -323,46 +329,49 @@ class Command(object):
 
 class InputParser:
     def __init__(self):
-        self.verbs = [
-            'go', 'move', 'walk', 'take', 'pick', 'grab', 'drop', 'use',
-            'look', 'examine', 'open', 'close', 'attack', 'fight',
-            'inventory', 'help', 'quit'
+        self._verbs = [
+            'go', 'get', 'drop', 'examine', 'inventory',
+            'examine', 'open', 'close', 'attack', 'inventory',
+            'help', 'quit'
         ]
-        self.directions = [
-            'north', 'south', 'east', 'west', 'up', 'down', 'left', 'right',
-            'forward', 'backward'
+        
+        self._directions = [
+            'north', 'east', 'south', 'west',
+            'in', 'out', 'up', 'down'
         ]
-        self.prepositions = [
+
+        self._prepositions = [
             'at', 'on', 'in', 'with', 'to', 'from', 'into', 'onto',
             'through', 'over', 'under', 'behind', 'toward'
         ]
+
         # You can update this list dynamically based on the game state
-        self.objects = [
-            'door', 'key', 'sword', 'shield', 'monster', 'chest', 'map',
-            'room', 'window', 'book', 'table', 'chair', 'potion'
+        self._objects = [
+            'key', 'sword', 'bottle', 'monster', 'chest', 'map',
+            'book', 'table', 'chair', 'potion'
         ]
 
-    def parse_input(self, user_input):
-        tokens = user_input.lower().split()
+    def ParseInput(self, user_input):
         verb = None
         obj = None
         prep = None
         target = None
 
-        # Parsing logic
-        idx = 0
-        while idx < len(tokens):
-            word = tokens[idx]
-            if not verb and word in self.verbs:
-                verb = word
-            elif not obj and (word in self.objects or word in self.directions):
-                obj = word
-            elif not prep and word in self.prepositions:
-                prep = word
-            elif prep and not target and (word in self.objects or word in self.directions):
-                target = word
-            idx += 1
+        # Break user input into tokens
+        tokens = user_input.lower().split()
 
+        # Parsing logic
+        for word in tokens:
+            if not verb and word in self._verbs:
+                verb = word
+            elif not obj and (word in self._objects or word in self._directions):
+                obj = word
+            elif not prep and word in self._prepositions:
+                prep = word
+            elif prep and not target and (word in self._objects or word in self._directions):
+                target = word
+
+        # Return parsed user input as a dict
         return {
             'verb': verb,
             'object': obj,
