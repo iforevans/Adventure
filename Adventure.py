@@ -21,17 +21,22 @@ class Game(object):
         self._map.append(location)
 
         # Create location 1
-        location = Location(1, "You are outside a small, wooden cabin in the woods.")
+        location = Location(1, "You are outside a small, wooden cabin in the woods. There is a tree here that looks climable!")
         location.SetExits(-1, -1, 2, -1, 0, -1, -1, -1)
         self._map.append(location)
 
         # Create location 2
-        location = Location(2, "You are on a overgrown north/south path in the woods.")
-        location.SetExits(1, -1, -1, -1, -1, -1, -1, -1)
+        location = Location(2, "You are on a overgrown north/south path in the woods. The is what appears to be a deep, dark well here.")
+        location.SetExits(1, -1, -1, -1, -1, -1, -1, 3)
+        self._map.append(location)
+
+        # Create location 3
+        location = Location(3, "You are at the bottom of a very deep well. You can just see daylight overhead.")
+        location.SetExits(-1, -1, -1, -1, -1, -1, 2, -1)
         self._map.append(location)
 
     def CreateItems(self):
-        # Full bottle
+        # Bottle
         item = Item("bottle", "The bottle is full of water", 1)
         self._map[0].DropItem(item)
 
