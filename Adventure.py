@@ -3,7 +3,7 @@
 class Game(object):
     def __init__(self):
         self._alive = True
-        self._locations = []
+        self._map = []
         self._location = None
         self._carried = {}
 
@@ -12,38 +12,38 @@ class Game(object):
         self.CreateItems()
 
         # Set starting location
-        self._location = self._locations[0]
+        self._location = self._map[0]
 
     def CreateMap(self):
         # Create location 0
         location = Location(0, "You are inside a cabin in the woods.")
         location.SetExits(-1, -1, -1, -1, -1, 1, -1, -1)
-        self._locations.append(location)
+        self._map.append(location)
 
         # Create location 1
         location = Location(1, "You are outside a small, wooden cabin in the woods.")
         location.SetExits(-1, -1, 2, -1, 0, -1, -1, -1)
-        self._locations.append(location)
+        self._map.append(location)
 
         # Create location 2
         location = Location(2, "You are on a overgrown north/south path in the woods.")
         location.SetExits(1, -1, -1, -1, -1, -1, -1, -1)
-        self._locations.append(location)
+        self._map.append(location)
 
     def CreateItems(self):
         # Full bottle
         item = Item("bottle", "The bottle is full of water", 1)
-        self._locations[0].DropItem(item)
+        self._map[0].DropItem(item)
 
         # Sword
         item = Item("sword", "A rusty old sword.", 3)
-        self._locations[1].DropItem(item)
+        self._map[1].DropItem(item)
 
     # Move in a valid direction
     def Move(self, direction):
         new_location_id = self._location.Move(direction)
         if new_location_id != -1:
-            self._location = self._locations[new_location_id]
+            self._location = self._map[new_location_id]
         else:
             print(f"You can't go {direction}!")
 
