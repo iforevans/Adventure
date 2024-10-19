@@ -271,72 +271,22 @@ class Item(object):
     def Getable(self):
         return self._getable
 
-
-class Command(object):
-    def __init__(self, command):
-        # Default status of invalid
-        self._valid = False
-
-        # Define valid verbs & directions
-        self._valid_verbs = ["go", "get", "drop", "examine", "inventory", "quit"]
-        self._valid_directions = ["north", "east", "south", "west", "in", "out", "up", "down"]
-
-        # To hold our parsed command
-        self._command = {}
-
-        # Split the user input into seperate words
-        self._words = command.split(' ')
-
-        # We should get two words (verb-noun)
-        if len(self._words) == 2:
-            # Do we have a valid verb?
-            if self._words[0] in self._valid_verbs:
-                # Yep, save the nound and ver to our command dict
-                self._command["verb"] = self._words[0]
-                self._command["noun"] = self._words[1]
-                self._valid = True
-        elif len(self._words) == 1 and self._words[0] == "quit":
-            # Valid quit command
-            self._command["verb"] = self._words[0]
-            self._command["noun"] = ""
-            self._valid = True
-        elif len(self._words) == 1 and self._words[0] == "inventory":
-            # Valid quit command
-            self._command["verb"] = self._words[0]
-            self._command["noun"] = ""
-            self._valid = True
-
-    # Return our status
-    def IsValid(self):
-        return self._valid
-
-    # Get the verb
-    def GetVerb(self):
-        if self._valid:
-            return self._command["verb"]
-        else:
-            return None
-
-    # Get the noun
-    def GetNoun(self):
-        if self._valid:
-            return self._command["noun"]
-        else:
-            return None
-
 class InputParser:
     def __init__(self):
+        # Valid verbs
         self._verbs = [
             'go', 'get', 'drop', 'examine', 'inventory',
             'examine', 'open', 'close', 'attack', 'inventory',
             'help', 'quit'
         ]
         
+        # Valid directions
         self._directions = [
             'north', 'east', 'south', 'west',
             'in', 'out', 'up', 'down'
         ]
 
+        #  Valid preps
         self._prepositions = [
             'at', 'on', 'in', 'with', 'to', 'from', 'into', 'onto',
             'through', 'over', 'under', 'behind', 'toward'
@@ -348,6 +298,7 @@ class InputParser:
             'book', 'table', 'chair', 'potion'
         ]
 
+    # Parse the user input
     def ParseInput(self, user_input):
         verb = None
         obj = None
@@ -357,7 +308,7 @@ class InputParser:
         # Break user input into tokens
         tokens = user_input.lower().split()
 
-        # Parsing logic
+        # Parse the tokens
         for word in tokens:
             if not verb and word in self._verbs:
                 verb = word
