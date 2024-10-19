@@ -31,6 +31,7 @@ class Game(object):
         self._alive = True
 
         # Game attributes
+        self._parser = InputParser()
         self._map = {}
         self._location = None
 
@@ -76,18 +77,22 @@ class Game(object):
         # Bottle
         item = Item("bottle", "The bottle is full of water", W_LIGHT, A_GETABLE)
         self._map[L_INSIDE_CABIN].DropItem(item)
+        self._parser.AddObject("bottle")
 
         # Sword
         item = Item("sword", "A rusty old sword.", W_HEAVY, A_GETABLE)
         self._map[L_INSIDE_CABIN].DropItem(item)
+        self._parser.AddObject("sword")
 
         # key
         item = Item("key", "A small golden key.", W_LIGHT, A_GETABLE)
         self._map[L_TOP_OF_TREE].DropItem(item)
+        self._parser.AddObject("key")
 
         # chest
         item = Item("chest", "A very strong, heavy chest. The chest is locked.", W_VERY_HEAVY, A_NOT_GETABLE)
         self._map[L_BOTTOM_OF_WELL].DropItem(item)
+        self._parser.AddObject("chest")
 
     # Move in a valid direction
     def Go(self, direction):
@@ -158,15 +163,12 @@ class Game(object):
 
     # Main run method
     def run(self):
-        # Create our parser
-        parser = InputParser()
-
         while (self._alive):
             # Tell the player where they are
             self._location.Describe()
 
             # What do they want to do?
-            command = parser.ParseInput(input("What next? "))
+            command = self._parser.ParseInput(input("What next? "))
 
             # Valid command
             if command["verb"] == None:
@@ -293,10 +295,11 @@ class InputParser:
         ]
 
         # You can update this list dynamically based on the game state
-        self._objects = [
-            'key', 'sword', 'bottle', 'monster', 'chest', 'map',
-            'book', 'table', 'chair', 'potion'
-        ]
+        self._objects = []
+
+    # Add an object to our objects list
+    def AddObject(self, object_name):
+        self._objects.append(object_name)
 
     # Parse the user input
     def ParseInput(self, user_input):
@@ -326,4 +329,3 @@ class InputParser:
             'preposition': prep,
             'target': target
         }
-
