@@ -29,30 +29,32 @@ class Game(object):
         self.CreateItems()
 
         # Set starting location
-        self._location = self._map[0]
+        self._location = self._map[L_INSIDE_CABIN]
 
     def CreateMap(self):
         # Create Locations. Eventually we will get all this from a map file
+
+        # Inside cabin
         location = Location(L_INSIDE_CABIN, "You are inside a cabin in the woods.")
         location.SetExit(D_OUT, L_OUTSIDE_CABIN)
-        self._map[location.Name] = location
+        self._map[location.Name()] = location
 
         # Outside cabin
         location = Location(L_OUTSIDE_CABIN, "You are outside a small, wooden cabin in the woods. There is a tree here that looks climable!")
         location.SetExit(D_IN, L_INSIDE_CABIN)
         location.SetExit(D_SOUTH, L_OVERGROWN_PATH)
-        self._map[location.Name] = location
+        self._map[location.Name()] = location
 
         # Overgrown path
         location = Location(L_OVERGROWN_PATH, "You are on a overgrown north/south path in the woods. The is what appears to be a deep, dark well here.")
         location.SetExit(D_DOWN, L_BOTTOM_OF_WELL)
         location.SetExit(D_NORTH, L_OUTSIDE_CABIN)
-        self._map[location.Name] = location
+        self._map[location.Name()] = location
 
         # Bottom of well
         location = Location(L_BOTTOM_OF_WELL, "You are at the bottom of a very deep, but now dry well. You can just see daylight overhead.")
         location.SetExit(D_UP, L_OVERGROWN_PATH)
-        self._map[location.Name] = location
+        self._map[location.Name()] = location
 
     def CreateItems(self):
         # Bottle
@@ -109,9 +111,9 @@ class Game(object):
     def Inventory(self):
         # List all the items we are carrying
         if len(self._carried) > 0:
-            print("You are carrying: ", end=" ")
+            print("You are carrying:", end=" ")
             for item_name in self._carried:
-                print(f"{item_name} ")
+                print(f"{item_name}", end=" ")
         else:
             print("You are not carrying anything!")
 
@@ -147,7 +149,7 @@ class Game(object):
                     self.DoCommand(command)
 
 class Location(object):
-    def __init__(self,name, description):
+    def __init__(self, name, description):
         self._name = name
         self._description = description
         self._exits = {}
