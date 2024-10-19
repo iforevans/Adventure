@@ -40,23 +40,20 @@ class Location(object):
 
     # Drop an item at this location
     def DropItem(self, item):
-        self._items[item.ItemId] = item
+        self._items[item.Name()] = item
 
     # Get an item from this location
-    def GetItem(self, item_id):
-        if item_id in self._items:
-            item = self._items(item_id)
-            return item
+    def GetItem(self, item_name):
+        if item_name in self._items:
+            return self._items.pop(item_name)
+        else:
+            return None
     
 class Item(object):
-    def __init__(self, id, name, description, weight):
-        self._id = id
+    def __init__(self, name, description, weight):
         self._name = name
         self._description = description
         self._weight = weight
-
-    def ItemId(self):
-        return self._id
 
     def Description(self):
         return self._description

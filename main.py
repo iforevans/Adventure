@@ -4,16 +4,15 @@ class Game(object):
     def __init__(self):
         self._alive = True
         self._locations = []
-        self._location_id = 0
         self._location = None
-        self._rucksack = {}
+        self._carried = {}
 
         # Create the game map & Items
         self.CreateMap()
         self.CreateItems()
 
         # Set starting location
-        self._location = self._locations[self._location_id]
+        self._location = self._locations[0]
 
     def CreateMap(self):
         # Create location 0
@@ -33,23 +32,38 @@ class Game(object):
 
     def CreateItems(self):
         # Full bottle
-        item = Item(0, "bottle", "The bottle is full of water", 1)
+        item = Item("bottle", "The bottle is full of water", 1)
         self._locations[0].DropItem(item)
 
         # Sword
-        item = Item(1, "sword", "A rusty old sword.", 3)
+        item = Item("sword", "A rusty old sword.", 3)
         self._locations[1].DropItem(item)
 
+    # Move in a valid direction
+    def Move(self, direction):
+        new_location_id = self._location.Move(direction)
+        if new_location_id != -1:
+            self._location = self._locations[new_location_id]
+        else:
+            print(f"You can't go {direction}!")
+
+    # Get an item
+    def Get(self, item_name):
+        item = self._location.GetItem
+        pass
+
+    # Drop an item
+    def Drop(self, command):
+        pass
 
     def DoCommand(self, command):
-        # Assume the command is a move for now
-        new_location_id = self._location.Move(command.GetNoun())
-        if new_location_id != -1:
-            self._location_id = new_location_id
-            self._location = self._locations[self._location_id]
-        else:
-            print(f"You can't go {command.GetNoun()}!")
-
+        # Go command?
+        if command.GetVerb() == "go":
+            self.Move(command.GetNoun())
+        elif command.GetVerb() == "get":
+            self.Get(command)
+        elif command.GetVerb() == "drop":
+            print("DROP")
 
     # Main run method
     def run(self):
