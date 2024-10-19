@@ -25,7 +25,6 @@ class Location(object):
             #   Print a blank, seperator line
             print()
  
-
         # Print any exits?
         print(f"Possible exits are:", end=" ")
         for key in self._exits:

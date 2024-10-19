@@ -72,6 +72,16 @@ class Game(object):
             # Nope, don't have it
             print(f"You are not carrying the {item_name}!")
 
+    # examine an item
+    def Examine(self, item_name):
+        # Do we have the item
+        if item_name in self._carried:
+            # Yep, print the longer derscription
+            print(f"You examine the {item_name}, and see: {self._carried[item_name].Description()}")
+        else:
+            # Nope, don't have it
+            print(f"You are not carrying the {item_name}, so you can't examine it!")
+
     def DoCommand(self, command):
         # Go command?
         if command.GetVerb() == "go":
@@ -80,6 +90,8 @@ class Game(object):
             self.Get(command.GetNoun())
         elif command.GetVerb() == "drop":
             self.Drop(command.GetNoun())
+        elif command.GetVerb() == "examine":
+            self.Examine(command.GetNoun())
 
     # Main run method
     def run(self):
