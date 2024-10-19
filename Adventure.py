@@ -135,9 +135,12 @@ class Game(object):
         if item_name in self._carried:
             # Yep, print the longer derscription
             print(f"You examine the {item_name}, and see: {self._carried[item_name].Description()}")
+        elif item_name in self._location._items:
+            # Item is here
+            print(f"You examine the {item_name}, and see: {self._location._items[item_name].Description()}")
         else:
             # Nope, don't have it
-            print(f"You are not carrying the {item_name}, so you can't examine it!")
+            print(f"I don't see the {item_name}, anywhere!")
 
     def Inventory(self):
         # List all the items we are carrying
