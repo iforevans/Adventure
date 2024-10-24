@@ -143,7 +143,7 @@ class Parser(object):
         self._verbs = [
             'go', 'get', 'drop', 'examine', 'inventory',
             'examine', 'open', 'close', 'attack', 'inventory',
-            'help', 'quit'
+            'unlock', 'lock', 'help', 'quit'
         ]
         
         # Valid directions
@@ -318,16 +318,21 @@ class Game(object):
             print("You are not carrying anything!")
 
     def DoCommand(self, command):
+        # Do this just once. DRY.
+        verb = command.GetVerb()
+
         # Go command?
-        if command.GetVerb() == "go":
+        if verb == "go":
             self.Go(command.GetObject())
-        elif command.GetVerb() == "get":
+        elif verb == "get":
             self.Get(command.GetObject())
-        elif command.GetVerb() == "drop":
+        elif verb == "drop":
             self.Drop(command.GetObject())
-        elif command.GetVerb() == "examine":
+        elif verb = "unlock": 
+            pass
+        elif verb == "examine":
             self.Examine(command.GetObject())
-        elif command.GetVerb() == "inventory":
+        elif verb == "inventory":
             self.Inventory()
 
     # Main run method
