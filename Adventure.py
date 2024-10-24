@@ -120,18 +120,18 @@ class Item(object):
 
 class Command(object):
     def __init__(self, verb, obj, prep, target):
-        _verb = verb
-        _obj = obj
-        _prep = prep
-        _target = target
+        self._verb = verb
+        self._obj = obj
+        self._prep = prep
+        self._target = target
 
     def GetVerb(self):
         return self._verb
 
     def GetObject(self):
-        return self.)obj
+        return self._obj
 
-    def Get Preposition(self):
+    def GetPreposition(self):
         return self._prep
 
     def GetTarget(self):
@@ -186,13 +186,8 @@ class Parser(object):
             elif prep and not target and (word in self._objects or word in self._directions):
                 target = word
 
-        # Return parsed user input as a dict
-        return {
-            'verb': verb,
-            'object': obj,
-            'preposition': prep,
-            'target': target
-        }
+        # Return parsed user input as a command object
+        return Command(verb, obj, prep, target)
 
 # This is the main game object!
 class Game(object):
@@ -324,15 +319,15 @@ class Game(object):
 
     def DoCommand(self, command):
         # Go command?
-        if command["verb"] == "go":
-            self.Go(command["object"])
-        elif command["verb"] == "get":
-            self.Get(command["object"])
-        elif command["verb"]== "drop":
-            self.Drop(command["object"])
-        elif command["verb"] == "examine":
-            self.Examine(command["object"])
-        elif command["verb"] == "inventory":
+        if command.GetVerb() == "go":
+            self.Go(command.GetObject())
+        elif command.GetVerb() == "get":
+            self.Get(command.GetObject())
+        elif command.GetVerb() == "drop":
+            self.Drop(command.GetObject())
+        elif command.GetVerb() == "examine":
+            self.Examine(command.GetObject())
+        elif command.GetVerb() == "inventory":
             self.Inventory()
 
     # Main run method
@@ -345,9 +340,9 @@ class Game(object):
             command = self._parser.ParseInput(input("What next? "))
 
             # Valid command
-            if command["verb"] == None:
+            if command.GetVerb() == None:
                 print("Sorry, I don't understand what you said ...")
-            elif command["verb"] == "quit":
+            elif command.GetVerb() == "quit":
                 print("You'll be back!")
                 self._alive = False
             else:
