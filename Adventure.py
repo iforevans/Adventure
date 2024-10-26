@@ -1,11 +1,13 @@
-# Constants - weights
-W_LIGHT = 1
-W_HEAVY = 2
-W_VERY_HEAVY = 3
-
-# Constants - attributes
+# Constants - item attributes
+A_LIGHT = 1
+A_HEAVY = 2
+A_VERY_HEAVY = 3
 A_GETABLE = True
 A_NOT_GETABLE = False
+A_CONTAINER = True
+A_NOT_CONTAINER = False
+A_OPEN = "open"
+A_CLOSED = "closed"
 
 # Constants - directions
 D_NORTH = "north"
@@ -100,13 +102,14 @@ class Location(object):
         return self._items.pop(item_name)
 
 class Item(object):
-    def __init__(self, name, description, weight, getable):
+    def __init__(self, name, description, weight, getable, container):
         self._name = name
         self._description = description
         self._weight = weight
         self._getable = getable
+        self._container = container
         self._items = {}
-        self._is_open = False
+        self._status = A_CLOSED
 
     def TakeFrom(self, name):
         # Item inside?
@@ -120,7 +123,7 @@ class Item(object):
     def PutIn(self, item):
         # Valid item?
         if item is not None:
-            _self._items[item.GetName()] = item
+            self._items[item.Name()] = item
 
     def Description(self):
         return self._description
@@ -219,7 +222,6 @@ class Game(object):
 
         # Create the game map & Items
         self.CreateMap()
-        self.CreateItems()
 
         # Set starting location
         self._location = self._map[L_INSIDE_CABIN]
@@ -227,54 +229,45 @@ class Game(object):
     def CreateMap(self):
         # Create Locations. Eventually we will get all this from a map file
 
-        # Inside cabin
+        # Create location
         location = Location(L_INSIDE_CABIN, "You are inside a cabin in the woods.")
         location.SetExit(D_OUT, L_OUTSIDE_CABIN)
+        item = Item("bottle", "The bottle is full of water", A_LIGHT, A_GETABLE, A_NOT_CONTAINER)
+        self._parser.AddObject("bottle")
+        location.DropItem(item)
         self._map[location.Name()] = location
 
-        # Outside cabin
+        # Create location
         location = Location(L_OUTSIDE_CABIN, "You are outside a small, wooden cabin in the woods. There is a tree here that looks climable!")
         location.SetExit(D_IN, L_INSIDE_CABIN)
         location.SetExit(D_UP, L_TOP_OF_TREE)
         location.SetExit(D_SOUTH, L_OVERGROWN_PATH)
         self._map[location.Name()] = location
 
-        # Top of tree
+        # Create location
         location = Location(L_TOP_OF_TREE, "You are at the very top of a tall tree. The branches are very thin here.")
         location.SetExit(D_DOWN, L_OUTSIDE_CABIN)
+        item = Item("key", "A small golden key.", A_LIGHT, A_GETABLE, A_NOT_CONTAINER)
+        self._parser.AddObject("key")
+        location.DropItem(item)
         self._map[location.Name()] = location
 
-        # Overgrown path
+        # Create location
         location = Location(L_OVERGROWN_PATH, "You are on a overgrown north/south path in the woods. The is what appears to be a deep, dark well here.")
         location.SetExit(D_DOWN, L_BOTTOM_OF_WELL)
         location.SetExit(D_NORTH, L_OUTSIDE_CABIN)
         self._map[location.Name()] = location
 
-        # Bottom of well
+        # Create location
         location = Location(L_BOTTOM_OF_WELL, "You are at the bottom of a very deep, but now dry well. You can just see daylight high overhead.")
         location.SetExit(D_UP, L_OVERGROWN_PATH)
-        self._map[location.Name()] = location
-
-    def CreateItems(self):
-        # Bottle
-        item = Item("bottle", "The bottle is full of water", W_LIGHT, A_GETABLE)
-        self._map[L_INSIDE_CABIN].DropItem(item)
-        self._parser.AddObject("bottle")
-
-        # Sword
-        item = Item("sword", "A rusty old sword.", W_HEAVY, A_GETABLE)
-        self._map[L_INSIDE_CABIN].DropItem(item)
-        self._parser.AddObject("sword")
-
-        # key
-        item = Item("key", "A small golden key.", W_LIGHT, A_GETABLE)
-        self._map[L_TOP_OF_TREE].DropItem(item)
-        self._parser.AddObject("key")
-
-        # chest
-        item = Item("chest", "A very strong, heavy chest. The chest is locked and too heavy to move.", W_VERY_HEAVY, A_NOT_GETABLE)
-        self._map[L_BOTTOM_OF_WELL].DropItem(item)
+        chest = Item("chest", "A very strong, heavy chest. The chest is locked and too heavy to move.", A_VERY_HEAVY, A_NOT_GETABLE, A_CONTAINER)
         self._parser.AddObject("chest")
+        sword = Item("sword", "A rusty old sword. It still looks dangerous, though!", A_HEAVY, A_GETABLE, A_NOT_CONTAINER)
+        self._parser.AddObject("sword")
+        chest.PutIn(sword)
+        location.DropItem(chest)
+        self._map[location.Name()] = location
 
     # Move in a valid direction
     def Go(self, direction):
@@ -333,8 +326,6 @@ class Game(object):
         else:
             print("You are not carrying anything!")
 
-    def Unlock()
-
     def DoCommand(self, command):
         # Do this just once. DRY.
         verb = command.GetVerb()
@@ -346,7 +337,7 @@ class Game(object):
             self.Get(command.GetObject())
         elif verb == "drop":
             self.Drop(command.GetObject())
-        elif verb = "unlock": 
+        elif verb == "open": 
             pass
         elif verb == "examine":
             self.Examine(command.GetObject())
