@@ -105,6 +105,22 @@ class Item(object):
         self._description = description
         self._weight = weight
         self._getable = getable
+        self._items = {}
+        self._is_open = False
+
+    def TakeFrom(self, name):
+        # Item inside?
+        if name in self._items:
+            # Yep, removed from container items and return
+            return self._items.pop(name)
+        else:
+            # Nope, not here
+            return None
+
+    def PutIn(self, item):
+        # Valid item?
+        if item is not None:
+            _self._items[item.GetName()] = item
 
     def Description(self):
         return self._description
@@ -143,7 +159,7 @@ class Parser(object):
         self._verbs = [
             'go', 'get', 'drop', 'examine', 'inventory',
             'examine', 'open', 'close', 'attack', 'inventory',
-            'unlock', 'lock', 'help', 'quit'
+            'put', 'take', 'help', 'quit'
         ]
         
         # Valid directions
@@ -316,6 +332,8 @@ class Game(object):
                 print(f"{item_name}", end=" ")
         else:
             print("You are not carrying anything!")
+
+    def Unlock()
 
     def DoCommand(self, command):
         # Do this just once. DRY.
