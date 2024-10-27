@@ -353,6 +353,10 @@ class Game(object):
         else:
             print("You are not carrying anything!")
 
+    def Open(self, command):
+        if command.GetO
+
+
     def DoCommand(self, command):
         # Do this just once. DRY.
         verb = command.GetVerb()
@@ -365,7 +369,7 @@ class Game(object):
         elif verb == "drop":
             self.Drop(command)
         elif verb == "open": 
-            pass
+            self.Open(command)
         elif verb == "examine":
             self.Examine(command)
         elif verb == "inventory":
