@@ -271,55 +271,78 @@ class Game(object):
 
     # Move in a valid direction
     def Go(self, command):
-        # Get the object i.e. the direction
+        # Did we get a valid object?
         if command.GetObject() is not None:
+            # Yep, assume the object is a direction and try and move there
             new_location = self._location.Move(command.GetObject())
             if new_location is not None:
                 self._location = self._map[new_location]
             else:
                 print(f"You can't go {direction}!")
         else:
-            print("Go where?")
+            print("Sorry, I don't understand where you want to go...")
 
     # Get an item
     def Get(self, command):
-        # Is the requested item present?
-        if self._location.IsPresent(item_name):
-            # Yep, present. Now, is it getable?
-            if self._location.IsGetable(item_name):
-                # Yep, present and getable
-                self._carried[item_name] = self._location.GetItem(item_name)
-                print(f"You picked up the {item_name}")
+        # Did we get a valid object?
+        if command.GetObject() is not None:
+            # Yep, so assume the object is an item name and try and get it
+            item_name = command.GetObject()
+            if self._location.IsPresent(item_name):
+                # Yep, present. Now, is it getable?
+                if self._location.IsGetable(item_name):
+                    # Yep, present and getable
+                    self._carried[item_name] = self._location.GetItem(item_name)
+                    print(f"You picked up the {item_name}")
+                else:
+                    # Nope, not getable
+                    print(f"You can't get the {item_name}.")
             else:
-                # Nope, not getable
-                print(f"You can't get the {item_name}.")
+                # Nope, not present
+                print(f"I don't see a {item_name} here!")
         else:
-            # Nope, not present
-            print(f"I don't see a {item_name} here!")
+                print("Sorry, I don't understand what you want to get...")
+
 
     # Drop an item
     def Drop(self, command):
-        # Do we have the item
-        if item_name in self._carried:
-            # Yep, remove from carried and drop in current loc
-            self._location.DropItem(self._carried.pop(item_name))
-            print(f"You dropped the {item_name} here.")
+        # Do we have a valid object
+        if command.GetObject() is not None:
+            # Yep, so assume the object is an item name
+            item_name = command.GetObject()
+
+            # Are we carrying it?
+            if item_name in self._carried:
+                # Yep, remove from carried and drop in current loc
+                self._location.DropItem(self._carried.pop(item_name))
+                print(f"You dropped the {item_name} here.")
+            else:
+                # Nope, don't have it
+                print(f"You are not carrying a {item_name}!")
         else:
-            # Nope, don't have it
-            print(f"You are not carrying the {item_name}!")
+            # Nope
+            print("Sorry, I don't understand what you want to drop...")
 
     # examine an item
     def Examine(self, command):
-        # Do we have the item
-        if item_name in self._carried:
-            # Yep, print the longer derscription
-            print(f"You examine the {item_name}, and see: {self._carried[item_name].Description()}")
-        elif item_name in self._location._items:
-            # Item is here
-            print(f"You examine the {item_name}, and see: {self._location._items[item_name].Description()}")
+        # Do we have a valid object?
+        if command.GetObject() is not None:
+            # Yep, assume the object is the item name
+            item_name = command.GetObject()
+
+            # Are we carrying it?
+            if item_name in self._carried:
+                # Yep, print the longer derscription
+                print(f"You examine the {item_name}, and see: {self._carried[item_name].Description()}")
+            elif item_name in self._location._items:
+                # Item is here
+                print(f"You examine the {item_name}, and see: {self._location._items[item_name].Description()}")
+            else:
+                # Nope, don't have it
+                print(f"I don't see a {item_name}, anywhere!")
         else:
-            # Nope, don't have it
-            print(f"I don't see the {item_name}, anywhere!")
+            # Nope,
+            print("Sorry, I don't understand what you want to examine...")
 
     def Inventory(self):
         # List all the items we are carrying
