@@ -270,15 +270,19 @@ class Game(object):
         self._map[location.Name()] = location
 
     # Move in a valid direction
-    def Go(self, direction):
-        new_location = self._location.Move(direction)
-        if new_location is not None:
-            self._location = self._map[new_location]
+    def Go(self, command):
+        # Get the object i.e. the direction
+        if command.GetObject() is not None:
+            new_location = self._location.Move(command.GetObject())
+            if new_location is not None:
+                self._location = self._map[new_location]
+            else:
+                print(f"You can't go {direction}!")
         else:
-            print(f"You can't go {direction}!")
+            print("Go where?")
 
     # Get an item
-    def Get(self, item_name):
+    def Get(self, command):
         # Is the requested item present?
         if self._location.IsPresent(item_name):
             # Yep, present. Now, is it getable?
@@ -294,7 +298,7 @@ class Game(object):
             print(f"I don't see a {item_name} here!")
 
     # Drop an item
-    def Drop(self, item_name):
+    def Drop(self, command):
         # Do we have the item
         if item_name in self._carried:
             # Yep, remove from carried and drop in current loc
@@ -305,7 +309,7 @@ class Game(object):
             print(f"You are not carrying the {item_name}!")
 
     # examine an item
-    def Examine(self, item_name):
+    def Examine(self, command):
         # Do we have the item
         if item_name in self._carried:
             # Yep, print the longer derscription
@@ -332,15 +336,15 @@ class Game(object):
 
         # Go command?
         if verb == "go":
-            self.Go(command.GetObject())
+            self.Go(command)
         elif verb == "get":
-            self.Get(command.GetObject())
+            self.Get(command)
         elif verb == "drop":
-            self.Drop(command.GetObject())
+            self.Drop(command)
         elif verb == "open": 
             pass
         elif verb == "examine":
-            self.Examine(command.GetObject())
+            self.Examine(command)
         elif verb == "inventory":
             self.Inventory()
 
