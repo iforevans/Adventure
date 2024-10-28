@@ -250,8 +250,14 @@ class Game(object):
         # Create location
         location = Location(L_INSIDE_CABIN, "You are inside a cabin in the woods.")
         location.SetExit(D_OUT, L_OUTSIDE_CABIN)
-        item = Item("bottle", "The bottle is full of water", A_LIGHT)
-        item.Set
+
+        # Create bottle
+        item = Item()
+        item.SetName("bottle")
+        item.SetDescription("The bottle is full of water")
+        item.SetWeight(A_LIGHT)
+        item.SetIsGetable(True)
+        item.SetIsContainer(False)
         self._parser.AddObject("bottle")
         location.DropItem(item)
         self._map[location.Name()] = location
@@ -266,7 +272,14 @@ class Game(object):
         # Create location
         location = Location(L_TOP_OF_TREE, "You are at the very top of a tall tree. The branches are very thin here.")
         location.SetExit(D_DOWN, L_OUTSIDE_CABIN)
-        item = Item("key", "A small golden key.", A_LIGHT, A_GETABLE, A_NOT_CONTAINER)
+
+        # Create key
+        item = Item()
+        item.SetName("key")
+        item.SetDescription("A small golden key.")
+        item.SetWeight(A_LIGHT)
+        item.SetIsGetable(True)
+        item.SetIsContainer(False)
         self._parser.AddObject("key")
         location.DropItem(item)
         self._map[location.Name()] = location
@@ -280,10 +293,26 @@ class Game(object):
         # Create location
         location = Location(L_BOTTOM_OF_WELL, "You are at the bottom of a very deep, but now dry well. You can just see daylight high overhead.")
         location.SetExit(D_UP, L_OVERGROWN_PATH)
-        chest = Item("chest", "A very strong, heavy chest. The chest is locked and too heavy to move.", A_VERY_HEAVY, A_NOT_GETABLE, A_CONTAINER)
+
+        # Create chest
+        chest = Item()
+        chest.SetName("chest")
+        chest.SetDescription("A very strong, heavy chest. The chest is locked and too heavy to move.")
+        chest.SetWeight(A_VERY_HEAVY)
+        chest.SetIsGetable(False)
+        chest.SetIsContainer(True)
         self._parser.AddObject("chest")
-        sword = Item("sword", "A rusty old sword. It still looks dangerous, though!", A_HEAVY, A_GETABLE, A_NOT_CONTAINER)
+
+        # Create sword
+        sword = Item()
+        sword.SetName("sword")
+        sword.SetDescription("A rusty old sword. It still looks dangerous, though!")
+        sword.SetWeight(A_HEAVY)
+        sword.SetIsGetable(True)
+        sword.SetIsContainer(False)
         self._parser.AddObject("sword")
+
+        # Put the sword in the chest
         chest.PutIn(sword)
         location.DropItem(chest)
         self._map[location.Name()] = location
