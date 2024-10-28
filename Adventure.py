@@ -98,10 +98,10 @@ class Location(object):
         return self._items.pop(item_name)
 
 class Item(object):
-    def __init__(_self):
-        self._name = name
-        self._description = description
-        self._weight = weight
+    def __init__(self):
+        self._name = ""
+        self._description = ""
+        self._weight = 0
         self._isGetable = False
         self._isContainer = False
         self._items = {}
