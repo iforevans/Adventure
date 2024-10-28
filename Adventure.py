@@ -2,10 +2,6 @@
 A_LIGHT = 1
 A_HEAVY = 2
 A_VERY_HEAVY = 3
-A_GETABLE = True
-A_NOT_GETABLE = False
-A_CONTAINER = True
-A_NOT_CONTAINER = False
 A_OPEN = "open"
 A_CLOSED = "closed"
 
@@ -102,15 +98,48 @@ class Location(object):
         return self._items.pop(item_name)
 
 class Item(object):
-    def __init__(self, name, description, weight, getable, container):
+    def __init__(_self):
         self._name = name
         self._description = description
         self._weight = weight
-        self._getable = getable
-        self._container = container
+        self._isGetable = False
+        self._isContainer = False
         self._items = {}
+        self._requiresToOpen = ""
         self._status = A_CLOSED
 
+    # Some getters & setters
+    def SetDescription(self, description):
+        self._description = description
+
+    def GetDescription(self):
+        return self._description
+
+    def SetName(self, name):
+        self._name = name
+
+    def GetName(self):
+        return self._name
+
+    def SetWeight(self, weight):
+        self._weight = weight
+
+    def GetWeight(self):
+        return self._weight
+
+    def SetIsContainer(self, isContainer):
+        self._isContainer = isContainer
+
+    def GetIsContainer(self):
+        return self._isContainer
+
+    def SetIsGetable(self, isGetable):
+        self._isGetable = isGetable
+
+    def GetIsGetable(self):
+        return _self._isGetable
+
+    # Class Methods
     def TakeFrom(self, name):
         # Item inside?
         if name in self._items:
@@ -125,17 +154,6 @@ class Item(object):
         if item is not None:
             self._items[item.Name()] = item
 
-    def Description(self):
-        return self._description
-
-    def Name(self):
-        return self._name
-
-    def Weight(self):
-        return self._weight
-
-    def Getable(self):
-        return self._getable
 
 class Command(object):
     def __init__(self, verb, obj, prep, target):
@@ -232,7 +250,8 @@ class Game(object):
         # Create location
         location = Location(L_INSIDE_CABIN, "You are inside a cabin in the woods.")
         location.SetExit(D_OUT, L_OUTSIDE_CABIN)
-        item = Item("bottle", "The bottle is full of water", A_LIGHT, A_GETABLE, A_NOT_CONTAINER)
+        item = Item("bottle", "The bottle is full of water", A_LIGHT)
+        item.Set
         self._parser.AddObject("bottle")
         location.DropItem(item)
         self._map[location.Name()] = location
@@ -354,14 +373,24 @@ class Game(object):
             print("You are not carrying anything!")
 
     def Open(self, command):
-        if command.GetO
+        # Do we have a valid object
+        if command.GetObject() is not None:
+            # Yep, so assume the object is an item name
+            item_name = command.GetObject()
+
+            if self._location.IsPresent(item_name):
+                pass
+        else:
+            # Nope
+            print("Sorry, I don't understand what you want to open...")
 
 
     def DoCommand(self, command):
         # Do this just once. DRY.
         verb = command.GetVerb()
 
-        # Go command?
+        # What's our verb
+        # (Not using match/case here as it requires >= 3.10)
         if verb == "go":
             self.Go(command)
         elif verb == "get":
