@@ -42,7 +42,7 @@ class Location(object):
         if len(self._items) > 0:
             print(f"You can see the following items here:", end=" ")
             for key in self._items:
-                print(f" {self._items[key].Name()}", end=" ")
+                print(f" {self._items[key].GetName()}", end=" ")
 
             #   Print a blank, seperator line
             print()
@@ -87,7 +87,7 @@ class Location(object):
         # First, is it even here?
         if item_name in self._items:
             # Yep, now, is it getable?
-            return self._items[item_name].Getable()
+            return self._items[item_name].GetGetable()
 
         # Nope, 
         return False
@@ -102,8 +102,8 @@ class Item(object):
         self._name = ""
         self._description = ""
         self._weight = 0
-        self._isGetable = False
-        self._isContainer = False
+        self._getable = False
+        self._container = False
         self._items = {}
         self._requiresToOpen = ""
         self._status = A_CLOSED
@@ -127,17 +127,17 @@ class Item(object):
     def GetWeight(self):
         return self._weight
 
-    def SetIsContainer(self, isContainer):
-        self._isContainer = isContainer
+    def SetContainer(self, container):
+        self._container = container
 
-    def GetIsContainer(self):
-        return self._isContainer
+    def GetContainer(self):
+        return self._container
 
-    def SetIsGetable(self, isGetable):
-        self._isGetable = isGetable
+    def SetGetable(self, getable):
+        self._getable = getable
 
-    def GetIsGetable(self):
-        return _self._isGetable
+    def GetGetable(self):
+        return self._getable
 
     # Class Methods
     def TakeFrom(self, name):
@@ -256,8 +256,8 @@ class Game(object):
         item.SetName("bottle")
         item.SetDescription("The bottle is full of water")
         item.SetWeight(A_LIGHT)
-        item.SetIsGetable(True)
-        item.SetIsContainer(False)
+        item.SetGetable(True)
+        item.SetContainer(False)
         self._parser.AddObject("bottle")
         location.DropItem(item)
         self._map[location.Name()] = location
@@ -278,8 +278,8 @@ class Game(object):
         item.SetName("key")
         item.SetDescription("A small golden key.")
         item.SetWeight(A_LIGHT)
-        item.SetIsGetable(True)
-        item.SetIsContainer(False)
+        item.SetGetable(True)
+        item.SetContainer(False)
         self._parser.AddObject("key")
         location.DropItem(item)
         self._map[location.Name()] = location
@@ -299,8 +299,8 @@ class Game(object):
         chest.SetName("chest")
         chest.SetDescription("A very strong, heavy chest. The chest is locked and too heavy to move.")
         chest.SetWeight(A_VERY_HEAVY)
-        chest.SetIsGetable(False)
-        chest.SetIsContainer(True)
+        chest.SetGetable(False)
+        chest.SetContainer(True)
         self._parser.AddObject("chest")
 
         # Create sword
@@ -308,8 +308,8 @@ class Game(object):
         sword.SetName("sword")
         sword.SetDescription("A rusty old sword. It still looks dangerous, though!")
         sword.SetWeight(A_HEAVY)
-        sword.SetIsGetable(True)
-        sword.SetIsContainer(False)
+        sword.SetGetable(True)
+        sword.SetContainer(False)
         self._parser.AddObject("sword")
 
         # Put the sword in the chest
@@ -319,10 +319,13 @@ class Game(object):
 
     # Move in a valid direction
     def Go(self, command):
-        # Did we get a valid object?
+        # Get the direction
+        direction = command.GetObject()
+
+        # Valid?
         if command.GetObject() is not None:
-            # Yep, assume the object is a direction and try and move there
-            new_location = self._location.Move(command.GetObject())
+            # Yep, try and move in that direction
+            new_location = self._location.Move(direction)
             if new_location is not None:
                 self._location = self._map[new_location]
             else:
@@ -381,10 +384,10 @@ class Game(object):
             # Are we carrying it?
             if item_name in self._carried:
                 # Yep, print the longer derscription
-                print(f"You examine the {item_name}, and see: {self._carried[item_name].Description()}")
+                print(f"You examine the {item_name}, and see: {self._carried[item_name].GetDescription()}")
             elif item_name in self._location._items:
                 # Item is here
-                print(f"You examine the {item_name}, and see: {self._location._items[item_name].Description()}")
+                print(f"You examine the {item_name}, and see: {self._location._items[item_name].GetDescription()}")
             else:
                 # Nope, don't have it
                 print(f"I don't see a {item_name}, anywhere!")
