@@ -421,7 +421,7 @@ class Game(object):
         # Do this just once. DRY.
         verb = command.GetVerb()
 
-        # What's our verb
+        # What's our verb?
         # (Not using match/case here as it requires >= 3.10)
         if verb == "go":
             self.Go(command)
