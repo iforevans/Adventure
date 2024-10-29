@@ -410,10 +410,16 @@ class Game(object):
             # Yep, so assume the object is an item name
             item_name = command.GetObject()
 
-            if self._location.IsPresent(item_name):
+            # Are we carrying it?
+            if item_name in self._carried:
                 pass
+            elif item_name in self._location._items:
+                pass
+            else:
+                # Not carried and not here
+                print(f"I don't see a {item_name}, anywhere!")
         else:
-            # Nope
+            # Nope,
             print("Sorry, I don't understand what you want to open...")
 
 
