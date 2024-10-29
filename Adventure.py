@@ -72,7 +72,7 @@ class Location(object):
 
     # Drop an item at this location
     def DropItem(self, item):
-        self._items[item.Name()] = item
+        self._items[item.GetName()] = item
 
     def IsPresent(self, item_name):
         # Is the item here?
@@ -152,7 +152,7 @@ class Item(object):
     def PutIn(self, item):
         # Valid item?
         if item is not None:
-            self._items[item.Name()] = item
+            self._items[item.GetName()] = item
 
 
 class Command(object):
