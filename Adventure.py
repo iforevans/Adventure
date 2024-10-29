@@ -412,8 +412,10 @@ class Game(object):
 
             # Are we carrying it?
             if item_name in self._carried:
+                # Open the item
                 pass
             elif item_name in self._location._items:
+                # Open the item
                 pass
             else:
                 # Not carried and not here
