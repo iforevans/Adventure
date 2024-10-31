@@ -404,6 +404,10 @@ class Game(object):
         else:
             print("You are not carrying anything!")
 
+    def OpenItem(self, item_name, command):
+        # if we get here 
+        pass
+
     def Open(self, command):
         # Do we have a valid object
         if command.GetObject() is not None:
