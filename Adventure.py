@@ -108,7 +108,7 @@ class Item(object):
         self._requiresToOpen = ""
         self._status = A_CLOSED
 
-    # Some getters & setters
+    # Getters & Setters
     def SetDescription(self, description):
         self._description = description
 
@@ -162,6 +162,7 @@ class Command(object):
         self._prep = prep
         self._target = target
 
+    # Getters & Setters
     def GetVerb(self):
         return self._verb
 
