@@ -105,10 +105,16 @@ class Item(object):
         self._getable = False
         self._container = False
         self._items = {}
-        self._requiresToOpen = ""
+        self._requires_to_open = ""
         self._status = A_CLOSED
 
     # Some getters & setters
+    def SetRequiresToOpen(self, requires_to_open):
+        self._requires_to_open = requires_to_open
+
+    def GetRequiresToOpen(self):
+        return self._requires_to_open
+
     def SetDescription(self, description):
         self._description = description
 
@@ -301,6 +307,7 @@ class Game(object):
         chest.SetWeight(A_VERY_HEAVY)
         chest.SetGetable(False)
         chest.SetContainer(True)
+        chest.SetRequiresToOpen("key")
         self._parser.AddObject("chest")
 
         # Create sword
