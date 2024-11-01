@@ -105,10 +105,16 @@ class Item(object):
         self._getable = False
         self._container = False
         self._items = {}
-        self._requiresToOpen = ""
+        self._requires_to_open = ""
         self._status = A_CLOSED
 
-    # Getters & Setters
+    # Some getters & setters
+    def SetRequiresToOpen(self, requires_to_open):
+        self._requires_to_open = requires_to_open
+
+    def GetRequiresToOpen(self):
+        return self._requires_to_open
+
     def SetDescription(self, description):
         self._description = description
 
@@ -302,6 +308,7 @@ class Game(object):
         chest.SetWeight(A_VERY_HEAVY)
         chest.SetGetable(False)
         chest.SetContainer(True)
+        chest.SetRequiresToOpen("key")
         self._parser.AddObject("chest")
 
         # Create sword
@@ -405,6 +412,10 @@ class Game(object):
         else:
             print("You are not carrying anything!")
 
+    def OpenItem(self, item_name, command):
+        # if we get here 
+        pass
+
     def Open(self, command):
         # Do we have a valid object
         if command.GetObject() is not None:
@@ -413,8 +424,10 @@ class Game(object):
 
             # Are we carrying it?
             if item_name in self._carried:
+                # Open the item
                 pass
             elif item_name in self._location._items:
+                # Open the item
                 pass
             else:
                 # Not carried and not here
