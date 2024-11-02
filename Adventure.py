@@ -2,8 +2,6 @@
 A_LIGHT = 1
 A_HEAVY = 2
 A_VERY_HEAVY = 3
-A_OPEN = "open"
-A_CLOSED = "closed"
 
 # Constants - directions
 D_NORTH = "north"
@@ -36,15 +34,6 @@ class Location(object):
     def Describe(self):
         # print the location description
         print(f"\n{self._description}")
-
-        # Any items here?
-        if len(self._items) > 0:
-            print(f"You can see the following items here:", end=" ")
-            for key in self._items:
-                print(f" {self._items[key].GetName()}", end=" ")
-
-            #   Print a blank, seperator line
-            print()
  
         # Any exits?
         if len(self._exits) > 0:
@@ -68,10 +57,6 @@ class Location(object):
             return self._exits[direction]
         else:
             return None
-
-    # Drop an item at this location
-    def DropItem(self, item):
-        self._items[item.GetName()] = item
 
     def IsPresent(self, item_name):
         # Is the item here?
@@ -101,11 +86,12 @@ class Item(object):
         self._name = ""
         self._description = ""
         self._weight = 0
-        self._getable = False
-        self._container = False
-        self._items = {}
+        self._location = ""
         self._requires_to_open = ""
-        self._status = A_CLOSED
+        self._getable = False
+        self._open = False
+        self._carried = False
+        self._container = False
 
     # Some getters & setters
     def SetRequiresToOpen(self, requires_to_open):
@@ -249,21 +235,9 @@ class Game(object):
         self._location = self._map[L_INSIDE_CABIN]
 
     def CreateMap(self):
-        # Create Locations. Eventually we will get all this from a map file
-
-        # Create location
+        # Create Locations. Eventually we will get all these from a map file
         location = Location(L_INSIDE_CABIN, "You are inside a cabin in the woods.")
         location.SetExit(D_OUT, L_OUTSIDE_CABIN)
-
-        # Create bottle
-        item = Item()
-        item.SetName("bottle")
-        item.SetDescription("The bottle is full of water")
-        item.SetWeight(A_LIGHT)
-        item.SetGetable(True)
-        item.SetContainer(False)
-        self._parser.AddObject("bottle")
-        location.DropItem(item)
         self._map[location.Name()] = location
 
         # Create location
@@ -276,16 +250,6 @@ class Game(object):
         # Create location
         location = Location(L_TOP_OF_TREE, "You are at the very top of a tall tree. The branches are very thin here.")
         location.SetExit(D_DOWN, L_OUTSIDE_CABIN)
-
-        # Create key
-        item = Item()
-        item.SetName("key")
-        item.SetDescription("A small golden key.")
-        item.SetWeight(A_LIGHT)
-        item.SetGetable(True)
-        item.SetContainer(False)
-        self._parser.AddObject("key")
-        location.DropItem(item)
         self._map[location.Name()] = location
 
         # Create location
@@ -297,6 +261,29 @@ class Game(object):
         # Create location
         location = Location(L_BOTTOM_OF_WELL, "You are at the bottom of a very deep, but now dry well. You can just see daylight high overhead.")
         location.SetExit(D_UP, L_OVERGROWN_PATH)
+        self._map[location.Name()] = location
+
+        # Create Items. These will also come from a data file at some point.
+        item = Item()
+        item.SetName("bottle")
+        item.SetDescription("The bottle is full of water")
+        item.SetWeight(A_LIGHT)
+        item.SetGetable(True)
+        item.SetContainer(False)
+        self._parser.AddObject("bottle")
+        location.DropItem(item)
+        self._map[location.Name()] = location
+
+        # Create key
+        item = Item()
+        item.SetName("key")
+        item.SetDescription("A small golden key.")
+        item.SetWeight(A_LIGHT)
+        item.SetGetable(True)
+        item.SetContainer(False)
+        self._parser.AddObject("key")
+        location.DropItem(item)
+        self._map[location.Name()] = location
 
         # Create chest
         chest = Item()
