@@ -291,15 +291,21 @@ class Game(object):
         else:
             print("Sorry, I don't understand where you want to go...")
 
+    def IsPresent(self, item_name):
+        pass      
+
+    def IsGettable(self, item_name):
+        pass
+
     # Get an item
     def Get(self, command):
         # Did we get a valid object?
         if command.GetObject() is not None:
             # Yep, so assume the object is an item name and try and get it
             item_name = command.GetObject()
-            if self._location.IsPresent(item_name):
+            if self.IsPresent(item_name):
                 # Yep, present. Now, is it getable?
-                if self._location.IsGetable(item_name):
+                if self.IsGetable(item_name):
                     # Yep, present and getable
                     self._carried[item_name] = self._location.GetItem(item_name)
                     print(f"You picked up the {item_name}")
