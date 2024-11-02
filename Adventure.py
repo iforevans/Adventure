@@ -14,6 +14,7 @@ D_UP = "up"
 D_DOWN = "down"
 
 # Constants - location names
+L_CARRIED = "carried"
 L_INSIDE_CABIN = "inside_cabin"
 L_OUTSIDE_CABIN = "outside_cabin"
 L_TOP_OF_TREE = "top_of_tree"
@@ -58,39 +59,16 @@ class Location(object):
         else:
             return None
 
-    def IsPresent(self, item_name):
-        # Is the item here?
-        if item_name in self._items:
-            # Yep, it is
-            return True
-
-        # Nope, not here
-        return False
-
-    def IsGetable(self, item_name):
-        # First, is it even here?
-        if item_name in self._items:
-            # Yep, now, is it getable?
-            return self._items[item_name].GetGetable()
-
-        # Nope, 
-        return False
-
-    # Get an item from this location
-    def GetItem(self, item_name):
-        # Remove the item from this location and return
-        return self._items.pop(item_name)
 
 class Item(object):
     def __init__(self):
         self._name = ""
         self._description = ""
         self._weight = 0
-        self._location = ""
+        self._location_name = ""
         self._requires_to_open = ""
         self._getable = False
         self._open = False
-        self._carried = False
         self._container = False
 
     # Some getters & setters
@@ -130,20 +108,12 @@ class Item(object):
     def GetGetable(self):
         return self._getable
 
-    # Class Methods
-    def TakeFrom(self, name):
-        # Item inside?
-        if name in self._items:
-            # Yep, removed from container items and return
-            return self._items.pop(name)
-        else:
-            # Nope, not here
-            return None
+    def SetLocationName(self, location_name):
+        self._location_name = location_name
 
-    def PutIn(self, item):
-        # Valid item?
-        if item is not None:
-            self._items[item.GetName()] = item
+    def GetLocationName(self, location_name):
+        return self._location_name
+        
 
 
 class Command(object):
