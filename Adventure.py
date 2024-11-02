@@ -27,7 +27,6 @@ class Location(object):
         self._name = name
         self._description = description
         self._exits = {}
-        self._items = {}
 
     # Set an exit from this location
     def SetExit(self, direction, name):
@@ -236,12 +235,10 @@ class Parser(object):
 # This is the main game object!
 class Game(object):
     def __init__(self):
-        # Player attributes
-        self._carried = {}
+        # Class members & attributes
         self._alive = True
-
-        # Game attributes
         self._parser = Parser()
+        self._items = {}
         self._map = {}
         self._location = None
 
