@@ -49,7 +49,7 @@ class Location(object):
             print("Uh ho. There doesn't seem to be any way out of here!")
 
     # Get the location name
-    def Name(self):
+    def GetLocationName(self):
         return self._name
 
     # Move to a new location (if possible)
@@ -84,10 +84,10 @@ class Item(object):
     def GetDescription(self):
         return self._description
 
-    def SetName(self, name):
+    def SetItemName(self, name):
         self._name = name
 
-    def GetName(self):
+    def GetItemName(self):
         return self._name
 
     def SetWeight(self, weight):
@@ -108,12 +108,11 @@ class Item(object):
     def GetGetable(self):
         return self._getable
 
-    def SetLocationName(self, location_name):
-        self._location_name = location_name
+    def SetLocationName(self, location):
+        self._location_name = location
 
-    def GetLocationName(self, location_name):
+    def GetLocationName(self):
         return self._location_name
-        
 
 
 class Command(object):
@@ -191,93 +190,90 @@ class Parser(object):
 # This is the main game object!
 class Game(object):
     def __init__(self):
-        # Class members & attributes
+        # Initialize
         self._alive = True
         self._parser = Parser()
         self._items = {}
         self._map = {}
-        self._location = None
 
         # Create the game map & Items
         self.CreateMap()
-
-        # Set starting location
         self._location = self._map[L_INSIDE_CABIN]
+
 
     def CreateMap(self):
         # Create Locations. Eventually we will get all these from a map file
         location = Location(L_INSIDE_CABIN, "You are inside a cabin in the woods.")
         location.SetExit(D_OUT, L_OUTSIDE_CABIN)
-        self._map[location.Name()] = location
+        self._map[L_INSIDE_CABIN] = location
 
         # Create location
         location = Location(L_OUTSIDE_CABIN, "You are outside a small, wooden cabin in the woods. There is a tree here that looks climable!")
         location.SetExit(D_IN, L_INSIDE_CABIN)
         location.SetExit(D_UP, L_TOP_OF_TREE)
         location.SetExit(D_SOUTH, L_OVERGROWN_PATH)
-        self._map[location.Name()] = location
+        self._map[L_OUTSIDE_CABIN] = location
 
         # Create location
         location = Location(L_TOP_OF_TREE, "You are at the very top of a tall tree. The branches are very thin here.")
         location.SetExit(D_DOWN, L_OUTSIDE_CABIN)
-        self._map[location.Name()] = location
+        self._map[L_TOP_OF_TREE] = location
 
         # Create location
         location = Location(L_OVERGROWN_PATH, "You are on a overgrown north/south path in the woods. The is what appears to be a deep, dark well here.")
         location.SetExit(D_DOWN, L_BOTTOM_OF_WELL)
         location.SetExit(D_NORTH, L_OUTSIDE_CABIN)
-        self._map[location.Name()] = location
+        self._map[L_OVERGROWN_PATH] = location
 
         # Create location
         location = Location(L_BOTTOM_OF_WELL, "You are at the bottom of a very deep, but now dry well. You can just see daylight high overhead.")
         location.SetExit(D_UP, L_OVERGROWN_PATH)
-        self._map[location.Name()] = location
+        self._map[L_BOTTOM_OF_WELL] = location
 
-        # Create Items. These will also come from a data file at some point.
+        # Create items. These will also come from a data file at some point.
         item = Item()
-        item.SetName("bottle")
+        item.SetItemName("bottle")
         item.SetDescription("The bottle is full of water")
         item.SetWeight(A_LIGHT)
         item.SetGetable(True)
         item.SetContainer(False)
+        item.SetLocationName(L_INSIDE_CABIN)
+        self._items["bottle"] = item
         self._parser.AddObject("bottle")
-        location.DropItem(item)
-        self._map[location.Name()] = location
 
         # Create key
         item = Item()
-        item.SetName("key")
+        item.SetItemName("key")
         item.SetDescription("A small golden key.")
         item.SetWeight(A_LIGHT)
         item.SetGetable(True)
         item.SetContainer(False)
+        item.SetLocationName(L_TOP_OF_TREE)
+        self._items["key"] = item
         self._parser.AddObject("key")
-        location.DropItem(item)
-        self._map[location.Name()] = location
 
         # Create chest
-        chest = Item()
-        chest.SetName("chest")
-        chest.SetDescription("A very strong, heavy chest. The chest is locked and too heavy to move.")
-        chest.SetWeight(A_VERY_HEAVY)
-        chest.SetGetable(False)
-        chest.SetContainer(True)
-        chest.SetRequiresToOpen("key")
+        item = Item()
+        item.SetItemName("chest")
+        item.SetDescription("A very strong, heavy chest. The chest is locked and too heavy to move.")
+        item.SetWeight(A_VERY_HEAVY)
+        item.SetGetable(False)
+        item.SetContainer(True)
+        item.SetRequiresToOpen("key")
+        item.SetLocationName(L_BOTTOM_OF_WELL)
+        self._items["chest"] = item
         self._parser.AddObject("chest")
 
         # Create sword
-        sword = Item()
-        sword.SetName("sword")
-        sword.SetDescription("A rusty old sword. It still looks dangerous, though!")
-        sword.SetWeight(A_HEAVY)
-        sword.SetGetable(True)
-        sword.SetContainer(False)
+        item = Item()
+        item.SetItemName("sword")
+        item.SetDescription("A rusty old sword. It still looks dangerous, though!")
+        item.SetWeight(A_HEAVY)
+        item.SetGetable(True)
+        item.SetContainer(False)
+        item.SetLocationName(L_BOTTOM_OF_WELL)
+        self._items["sword"] = item
         self._parser.AddObject("sword")
-
-        # Put the sword in the chest
-        chest.PutIn(sword)
-        location.DropItem(chest)
-        self._map[location.Name()] = location
 
     # Move in a valid direction
     def Go(self, command):
@@ -410,11 +406,24 @@ class Game(object):
         elif verb == "inventory":
             self.Inventory()
 
-    # Main run method
-    def run(self):
-        while (self._alive):
-            # Tell the player where they are
+    def DescribeLocation(self):
+            # Describe the location
             self._location.Describe()
+
+            # show list of items at our location
+            print("You can see the following items here:", end=" ")
+            for item_name in self._items:
+                item = self._items[item_name]
+                if item.GetLocationName() == self._location.GetLocationName():
+                    print(item_name, end=" ")
+            print()
+
+
+    # Main run method
+    def Run(self):
+        while (self._alive):
+            # Tell the player where they are and what is there
+            self.DescribeLocation()
 
             # What do they want to do?
             command = self._parser.ParseInput(input("What next? "))
