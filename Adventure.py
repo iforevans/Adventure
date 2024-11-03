@@ -344,7 +344,7 @@ class Game(object):
                 print(f"You examine the {item.GetItemName()}, and see: {item.GetDescription()}")
             else:
                 # Nope, not here
-                print(f"I don't see a {item.GetItemName()}, anywhere!")
+                print(f"I don't see a {item.GetItemName()} anywhere!")
         else:
             # Nope,
             print("Sorry, I don't understand what you want to examine...")
@@ -412,7 +412,7 @@ class Game(object):
             # Describe the location
             self._location.Describe()
 
-            # show list of items at our location
+            # Show list of items here
             print("You can see the following items here:", end=" ")
             for item_name in self._items:
                 item = self._items[item_name]
