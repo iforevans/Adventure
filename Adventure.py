@@ -281,40 +281,33 @@ class Game(object):
         direction = command.GetObject()
 
         # Valid?
-        if command.GetObject() is not None:
+        if direction is not None:
             # Yep, try and move in that direction
-            new_location = self._location.Move(direction)
-            if new_location is not None:
-                self._location = self._map[new_location]
+            new_location_name = self._location.Move(direction)
+            if new_location_name is not None:
+                self._location = self._map[new_location_name]
             else:
                 print(f"You can't go {direction}!")
         else:
             print("Sorry, I don't understand where you want to go...")
 
-    def IsPresent(self, item_name):
-        pass      
-
-    def IsGettable(self, item_name):
-        pass
-
     # Get an item
     def Get(self, command):
-        # Did we get a valid object?
+        # Did we get a valid object name?
         if command.GetObject() is not None:
-            # Yep, so assume the object is an item name and try and get it
-            item_name = command.GetObject()
-            if self.IsPresent(item_name):
+            # Yep, is it here?
+            item = self._items[command.GetObject()]
+            if item.GetLocationName() == self._location.GetLocationName():
                 # Yep, present. Now, is it getable?
-                if self.IsGetable(item_name):
-                    # Yep, present and getable
-                    self._carried[item_name] = self._location.GetItem(item_name)
-                    print(f"You picked up the {item_name}")
+                if item.GetGetable():
+                    item.SetLocationName(L_CARRIED)
+                    print(f"You picked up the {item.GetItemName()}")
                 else:
                     # Nope, not getable
-                    print(f"You can't get the {item_name}.")
+                    print(f"You can't get the {item.GetItemName()}.")
             else:
                 # Nope, not present
-                print(f"I don't see a {item_name} here!")
+                print(f"I don't see a {item.GetItemName()} here!")
         else:
                 print("Sorry, I don't understand what you want to get...")
 
@@ -360,10 +353,16 @@ class Game(object):
             print("Sorry, I don't understand what you want to examine...")
 
     def Inventory(self):
-        # List all the items we are carrying
-        if len(self._carried) > 0:
+        # Build list of all the items we are carrying
+        carried= []
+        for item_name in self._items:
+            if self._items[item_name].GetLocationName() == L_CARRIED:
+                carried.append(item_name)
+
+        # Tell the player what they are carrying
+        if len(carried) > 0:
             print("You are carrying:", end=" ")
-            for item_name in self._carried:
+            for item_name in carried:
                 print(f"{item_name}", end=" ")
         else:
             print("You are not carrying anything!")
@@ -442,4 +441,5 @@ class Game(object):
                 self._alive = False
             else:
                 self.DoCommand(command)
+
 
