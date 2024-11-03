@@ -59,7 +59,6 @@ class Location(object):
         else:
             return None
 
-
 class Item(object):
     def __init__(self):
         self._name = ""
@@ -311,7 +310,6 @@ class Game(object):
         else:
                 print("Sorry, I don't understand what you want to get...")
 
-
     # Drop an item
     def Drop(self, command):
         # Do we have a valid object
@@ -333,21 +331,20 @@ class Game(object):
 
     # examine an item
     def Examine(self, command):
-        # Do we have a valid object?
+        # Did we get a valid object name?
         if command.GetObject() is not None:
-            # Yep, assume the object is the item name
-            item_name = command.GetObject()
-
+            # Yep, is it here?
+            item = self._items[command.GetObject()]
+            if item.GetLocationName() == self._location.GetLocationName():
+                # Yep, print the longer description
+                print(f"You examine the {item.GetItemName()}, and see: {item.GetDescription()}")
             # Are we carrying it?
-            if item_name in self._carried:
-                # Yep, print the longer derscription
-                print(f"You examine the {item_name}, and see: {self._carried[item_name].GetDescription()}")
-            elif item_name in self._location._items:
-                # Item is here
-                print(f"You examine the {item_name}, and see: {self._location._items[item_name].GetDescription()}")
+            elif item.GetLocationName() == L_CARRIED:
+                # Yep, print the longer description
+                print(f"You examine the {item.GetItemName()}, and see: {item.GetDescription()}")
             else:
-                # Nope, don't have it
-                print(f"I don't see a {item_name}, anywhere!")
+                # Nope, not here
+                print(f"I don't see a {item.GetItemName()}, anywhere!")
         else:
             # Nope,
             print("Sorry, I don't understand what you want to examine...")
