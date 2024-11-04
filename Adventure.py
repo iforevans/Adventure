@@ -359,7 +359,7 @@ class Game(object):
         else:
             print("You are not carrying anything!")
 
-    def OpenItem(self, item_name, command):
+    def OpenItem(self, item, command):
         # if we get here 
         pass
 
@@ -369,7 +369,12 @@ class Game(object):
             # Yep, is it here?
             item = self._items[command.GetObject()]
             if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
-                self.OpenItem(item, command)
+                # Is it a container?
+                if item.GetContainer():
+                    self.OpenItem(item, command)
+                else:
+                    # Nope, not a container
+                    print(f"You can't open the {item.GetItemName()}!")
             else:
                 # Nope, not here
                 print(f"I don't see a {item.GetItemName()} anywhere!")
