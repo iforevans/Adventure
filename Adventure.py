@@ -334,11 +334,7 @@ class Game(object):
         if command.GetObject() is not None:
             # Yep, is it here?
             item = self._items[command.GetObject()]
-            if item.GetLocationName() == self._location.GetLocationName():
-                # Yep, print the longer description
-                print(f"You examine the {item.GetItemName()}, and see: {item.GetDescription()}")
-            # Are we carrying it?
-            elif item.GetLocationName() == L_CARRIED:
+            if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
                 # Yep, print the longer description
                 print(f"You examine the {item.GetItemName()}, and see: {item.GetDescription()}")
             else:
@@ -368,21 +364,15 @@ class Game(object):
         pass
 
     def Open(self, command):
-        # Do we have a valid object
+        # Did we get a valid object name?
         if command.GetObject() is not None:
-            # Yep, so assume the object is an item name
-            item_name = command.GetObject()
-
-            # Are we carrying it?
-            if item_name in self._carried:
-                # Open the item
-                pass
-            elif item_name in self._location._items:
-                # Open the item
-                pass
+            # Yep, is it here?
+            item = self._items[command.GetObject()]
+            if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
+                self.OpenItem(item, command)
             else:
-                # Not carried and not here
-                print(f"I don't see a {item_name}, anywhere!")
+                # Nope, not here
+                print(f"I don't see a {item.GetItemName()} anywhere!")
         else:
             # Nope,
             print("Sorry, I don't understand what you want to open...")
