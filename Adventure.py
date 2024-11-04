@@ -315,16 +315,14 @@ class Game(object):
         # Do we have a valid object
         if command.GetObject() is not None:
             # Yep, so assume the object is an item name
-            item_name = command.GetObject()
+            item = self._items[command.GetObject()]
 
             # Are we carrying it?
-            if item_name in self._carried:
-                # Yep, remove from carried and drop in current loc
-                self._location.DropItem(self._carried.pop(item_name))
-                print(f"You dropped the {item_name} here.")
+            if item.GetLocationName() == L_CARRIED:
+                pass
             else:
                 # Nope, don't have it
-                print(f"You are not carrying a {item_name}!")
+                print(f"You are not carrying a {item.GetItemName()}!")
         else:
             # Nope
             print("Sorry, I don't understand what you want to drop...")
