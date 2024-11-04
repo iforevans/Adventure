@@ -270,7 +270,7 @@ class Game(object):
         item.SetWeight(A_HEAVY)
         item.SetGetable(True)
         item.SetContainer(False)
-        item.SetLocationName(L_BOTTOM_OF_WELL)
+        item.SetLocationName("chest")
         self._items["sword"] = item
         self._parser.AddObject("sword")
 
