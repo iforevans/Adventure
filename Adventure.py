@@ -319,7 +319,8 @@ class Game(object):
 
             # Are we carrying it?
             if item.GetLocationName() == L_CARRIED:
-                pass
+                # Yep, so set the item's locstion to the current location
+                item.SetLocationName(self._location.GetLocationName())
             else:
                 # Nope, don't have it
                 print(f"You are not carrying a {item.GetItemName()}!")
