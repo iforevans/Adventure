@@ -55,8 +55,7 @@ class Location(object):
         if len(self._exits) > 0:
             print(f"Possible exits are:", end=" ")
             for key in self._exits:
-                if self._exits[key] != -1:
-                    print(f" {key}", end= " ")
+                print(f" {key}", end= " ")
 
             #   Print a blank, seperator line
             print()
@@ -433,7 +432,6 @@ class Game(object):
             # Nope,
             print("Sorry, I don't understand what you want to open...")
 
-
     def DoCommand(self, command):
         # Do this just once. DRY.
         verb = command.GetVerb()
@@ -483,5 +481,3 @@ class Game(object):
                 self._alive = False
             else:
                 self.DoCommand(command)
-
-
