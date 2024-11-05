@@ -2,6 +2,7 @@
     {
         "name": "inside_cabin",
         "description": "You are inside a cabin in the woods.",
+        "start_location" : true,
         "exits": {
             "out": "outside_cabin"
         }
@@ -9,6 +10,7 @@
     {
         "name": "outside_cabin",
         "description": "You are outside a small, wooden cabin in the woods. There is a tree here that looks climable!",
+        "start_location" : false,
         "exits": {
             "in": "inside_cabin",
             "up": "top_of_tree",
@@ -18,6 +20,7 @@
     {
         "name": "top_of_tree",
         "description": "You are at the very top of a tall tree. The branches are very thin here.",
+        "start_location" : false,
         "exits": {
             "down": "outside_cabin"
         }
@@ -25,6 +28,7 @@
     {
         "name": "overgrown_path",
         "description": "You are on a overgrown north/south path in the woods. The is what appears to be a deep, dark well here.",
+        "start_location" : false,
         "exits": {
             "down": "bottom_of_well",
             "north": "outside_cabin"
@@ -33,6 +37,7 @@
     {
         "name": "bottom_of_well",
         "description": "You are at the bottom of a very deep, but now dry well. You can just see daylight high overhead.",
+        "start_location" : false,
         "exits": {
             "up": "overgrown_path"
         }
