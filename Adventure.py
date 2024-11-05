@@ -86,15 +86,15 @@ class Item(object):
         self._open = False
 
     def ToDict(self):
-        # Convert the Location instance to a dictionary
+        # Convert the item objects to a dictionary
         return {
             'name': self._name,
             'description': self._description,
             'weight': self._weight,
             'location_name' : self._location_name,
-            'requires_to_open' : self._requires_to_open,
             'getable' : self._getable,
             'container' : self._container,
+            'requires_to_open' : self._requires_to_open,
             'open' : self._open
         }
 
@@ -242,9 +242,34 @@ class Game(object):
 
         # Create the game map & Items
         self.CreateMap()
+        self.CreateItems()
         self._location = self._map[L_INSIDE_CABIN]
 
+    def CreateItems(self):
+        # Read the locations from the JSON file
+        with open(FN_ITEMS, 'r') as json_file:
+            items_list = json.load(json_file)
 
+        # Create items from the loaded location dicts
+        for item_dict in items_list:
+            # Create the item object
+            item = Item()
+
+            # Populate it
+            item.SetItemName(item_dict["name"])
+            item.SetDescription(item_dict["description"])
+            item.SetWeight(item_dict["weight"])
+            item.SetLocationName(item_dict["location_name"])
+            item.SetGetable(item_dict["getable"])
+            item.SetContainer(item_dict["container"])
+            item.SetRequiresToOpen(item_dict["requires_to_open"])
+            item.SetOpen(item_dict["open"])
+
+            # Add item
+            self._items[item_dict["name"]] = item
+            self._parser.AddObject(item_dict["name"])
+
+    
     def CreateMap(self):
         # Read the locations from the JSON file
         with open(FN_LOCATIONS, 'r') as json_file:
@@ -262,52 +287,7 @@ class Game(object):
                     location.SetExit(exit_name, exit_dict[exit_name])
             
             # Add the location to the map
-            self._map[location_dict["name"]] = location
-
-        # Create items. These will also come from a data file at some point.
-        item = Item()
-        item.SetItemName("bottle")
-        item.SetDescription("The bottle is full of water")
-        item.SetWeight(A_LIGHT)
-        item.SetGetable(True)
-        item.SetContainer(False)
-        item.SetLocationName(L_INSIDE_CABIN)
-        self._items["bottle"] = item
-        self._parser.AddObject("bottle")
-
-        # Create key
-        item = Item()
-        item.SetItemName("key")
-        item.SetDescription("A small golden key.")
-        item.SetWeight(A_LIGHT)
-        item.SetGetable(True)
-        item.SetContainer(False)
-        item.SetLocationName(L_TOP_OF_TREE)
-        self._items["key"] = item
-        self._parser.AddObject("key")
-
-        # Create chest
-        item = Item()
-        item.SetItemName("chest")
-        item.SetDescription("A very strong, heavy chest. The chest is far too heavy to move.")
-        item.SetWeight(A_VERY_HEAVY)
-        item.SetGetable(False)
-        item.SetContainer(True)
-        item.SetRequiresToOpen("key")
-        item.SetLocationName(L_BOTTOM_OF_WELL)
-        self._items["chest"] = item
-        self._parser.AddObject("chest")
-
-        # Create sword
-        item = Item()
-        item.SetItemName("sword")
-        item.SetDescription("A rusty old sword. It still looks dangerous, though!")
-        item.SetWeight(A_HEAVY)
-        item.SetGetable(True)
-        item.SetContainer(False)
-        item.SetLocationName("chest")
-        self._items["sword"] = item
-        self._parser.AddObject("sword")
+            self._map[location_dict["name"]] = location        
 
     # Move in a valid direction
     def Go(self, command):

@@ -1,0 +1,42 @@
+[
+    {
+        "name": "bottle",
+        "description": "The bottle is full of water",
+        "weight": 1,
+        "location_name": "inside_cabin",
+        "getable": true,
+        "container": false,
+        "requires_to_open": "",
+        "open": false
+    },
+    {
+        "name": "key",
+        "description": "A small golden key.",
+        "weight": 1,
+        "location_name": "top_of_tree",
+        "getable": true,
+        "container": false,
+        "requires_to_open": "",
+        "open": false
+    },
+    {
+        "name": "chest",
+        "description": "A very strong, heavy chest. The chest is far too heavy to move.",
+        "weight": 3,
+        "location_name": "bottom_of_well",
+        "getable": false,
+        "container": true,
+        "requires_to_open": "key",
+        "open": false
+    },
+    {
+        "name": "sword",
+        "description": "A rusty old sword. It still looks dangerous, though!",
+        "weight": 2,
+        "location_name": "chest",
+        "getable": true,
+        "container": false,
+        "requires_to_open": "",
+        "open": false
+    }
+]
