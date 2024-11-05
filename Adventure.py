@@ -1,3 +1,10 @@
+# Imports
+import json 
+ 
+# Constants - file names
+FN_LOCATIONS = "locations.json"
+FN_ITEMS = "items.json"
+
 # Constants - item attributes
 A_LIGHT = 1
 A_HEAVY = 2
