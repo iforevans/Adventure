@@ -367,35 +367,52 @@ class Game(object):
             print("You are not carrying anything!")
 
     def OpenItem(self, item, command):
-        # Has user specified a valid preposition and target?
+        obj = command.GetObject()
         prep = command.GetPreposition()
         target = command.GetTarget()
-        if prep == "with" or prep == "using":
-            # Do we have the item require to open?
-            carried = self.GetCarriedItems()
+
+        # Do we have the item require to open?
+        carried = self.GetCarriedItems()
+
+        # Has the player tried to use the correct item to open?
+        if target == item.GetRequiresToOpen():                
             if item.GetRequiresToOpen() in carried:
-                # Yep, we've got it!
+                # Yep, so open the item, and set all items within to now be in the current location
+                for item_name in self._items:
+                    if self._items[item_name].GetLocationName() == item.GetItemName():
+                        # Set new item location to current location
+                        self._items[item_name].SetLocationName(self._location.GetLocationName())
+                    
+                # Update player
+                print(f"You open the {obj}.")
             else:
-                print("Sorry, you don't have what you need to open the {item.GetObject()}.")
+                print(f"Sorry, you don't have what you need to open the {item.GetObject()}.")
         else:
-            print("Sorry, I'm not quite sure what you mean.")
+            print(f"You can't open the {item.GetItemName()} with that!")
 
 
     def Open(self, command):
+        obj = command.GetObject()
+        prep = command.GetPreposition()
+        target = command.GetTarget()
+
         # Did we get a valid object name?
-        if command.GetObject() is not None:
-            # Yep, is it here?
-            item = self._items[command.GetObject()]
-            if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
-                # Is it a container?
-                if item.GetContainer():
-                    self.OpenItem(item, command)
+        if obj is not None:
+            # Yep, valid prep?
+            if prep == "with" or prep == "using":
+                item = self._items[command.GetObject()]
+                if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
+                    # Is it a container?
+                    if item.GetContainer():
+                        self.OpenItem(item, command)
+                    else:
+                        # Nope, not a container
+                        print(f"You can't open the {item.GetItemName()}!")
                 else:
-                    # Nope, not a container
-                    print(f"You can't open the {item.GetItemName()}!")
+                    # Nope, not here
+                    print(f"I don't see a {item.GetItemName()} anywhere!")
             else:
-                # Nope, not here
-                print(f"I don't see a {item.GetItemName()} anywhere!")
+                print("Sorry, how do you want to open the chest?")
         else:
             # Nope,
             print("Sorry, I don't understand what you want to open...")
