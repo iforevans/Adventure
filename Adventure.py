@@ -10,6 +10,9 @@ A_LIGHT = 1
 A_HEAVY = 2
 A_VERY_HEAVY = 3
 
+# Special Location
+L_CARRIED = "carried"
+
 # Constants - directions
 D_NORTH = "north"
 D_EAST = "east"
