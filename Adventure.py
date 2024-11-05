@@ -151,8 +151,8 @@ class Parser(object):
 
         #  Valid preps
         self._prepositions = [
-            'at', 'on', 'in', 'with', 'to', 'from', 'into', 'onto',
-            'through', 'over', 'under', 'behind', 'toward'
+            'with', 'at', 'from', 'onto',
+            'using', 'into'
         ]
 
         # This should be added to as objects are created
@@ -344,12 +344,19 @@ class Game(object):
             # Nope,
             print("Sorry, I don't understand what you want to examine...")
 
-    def Inventory(self):
+    def GetCarriedItems(self):
         # Build list of all the items we are carrying
-        carried= []
+        carried = []
         for item_name in self._items:
             if self._items[item_name].GetLocationName() == L_CARRIED:
                 carried.append(item_name)
+
+        # Return the list
+        return carried
+
+    def Inventory(self):
+        # Build list of all the items we are carrying
+        carried = self.GetCarriedItems()
 
         # Tell the player what they are carrying
         if len(carried) > 0:
@@ -360,8 +367,19 @@ class Game(object):
             print("You are not carrying anything!")
 
     def OpenItem(self, item, command):
-        # if we get here 
-        pass
+        # Has user specified a valid preposition and target?
+        prep = command.GetPreposition()
+        target = command.GetTarget()
+        if prep == "with" or prep == "using":
+            # Do we have the item require to open?
+            carried = self.GetCarriedItems()
+            if item.GetRequiresToOpen() in carried:
+                # Yep, we've got it!
+            else:
+                print("Sorry, you don't have what you need to open the {item.GetObject()}.")
+        else:
+            print("Sorry, I'm not quite sure what you mean.")
+
 
     def Open(self, command):
         # Did we get a valid object name?
