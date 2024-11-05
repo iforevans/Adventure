@@ -20,18 +20,11 @@ D_OUT = "out"
 D_UP = "up"
 D_DOWN = "down"
 
-# Constants - location names
-L_CARRIED = "carried"
-L_INSIDE_CABIN = "inside_cabin"
-L_OUTSIDE_CABIN = "outside_cabin"
-L_TOP_OF_TREE = "top_of_tree"
-L_OVERGROWN_PATH = "overgrown_path"
-L_BOTTOM_OF_WELL = "bottom_of_well"
-
 class Location(object):
     def __init__(self, name, description):
         self._name = name
         self._description = description
+        self._start_location = False
         self._exits = {}
 
     def ToDict(self):
@@ -39,12 +32,20 @@ class Location(object):
         return {
             'name': self._name,
             'description': self._description,
+            'start_location' : self._start_location,
             'exits': self._exits
         }
 
     # Set an exit from this location
     def SetExit(self, direction, name):
         self._exits[direction] = name
+
+    # Get & Set Start Location 
+    def GetStartLocation(self):
+        return self._start_location
+    
+    def SetStartLocation(self, start_location):
+        self._start_location = start_location
 
     # Get the description of the location
     def Describe(self):
@@ -242,7 +243,6 @@ class Game(object):
         # Create the game map & Items
         self.CreateMap()
         self.CreateItems()
-        self._location = self._map[L_INSIDE_CABIN]
 
     def CreateItems(self):
         # Read the locations from the JSON file
@@ -272,21 +272,28 @@ class Game(object):
     def CreateMap(self):
         # Read the locations from the JSON file
         with open(FN_LOCATIONS, 'r') as json_file:
-            locations = json.load(json_file)
+            locations_list = json.load(json_file)
 
         # Create map from the loaded location dicts
-        for location_dict in locations:
+        for location_dict in locations_list:
             # Create the location object
             location = Location(location_dict["name"], location_dict["description"])
             
+            # Get start_location flag
+            location.SetStartLocation(location_dict["start_location"])
+
             # Add any exits
             exit_dict = location_dict["exits"]
             if exit_dict is not None:
                 for exit_name in exit_dict:
                     location.SetExit(exit_name, exit_dict[exit_name])
             
+            # Check if this location is the start location
+            if location.GetStartLocation():
+                self._location = location
+
             # Add the location to the map
-            self._map[location_dict["name"]] = location        
+            self._map[location_dict["name"]] = location     
 
     # Move in a valid direction
     def Go(self, command):
