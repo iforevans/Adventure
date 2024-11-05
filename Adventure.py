@@ -34,6 +34,14 @@ class Location(object):
         self._description = description
         self._exits = {}
 
+    def ToDict(self):
+        # Convert the Location instance to a dictionary
+        return {
+            'name': self._name,
+            'description': self._description,
+            'exits': self._exits
+        }
+
     # Set an exit from this location
     def SetExit(self, direction, name):
         self._exits[direction] = name
@@ -74,8 +82,21 @@ class Item(object):
         self._location_name = ""
         self._requires_to_open = ""
         self._getable = False
-        self._open = False
         self._container = False
+        self._open = False
+
+    def ToDict(self):
+        # Convert the Location instance to a dictionary
+        return {
+            'name': self._name,
+            'description': self._description,
+            'weight': self._weight,
+            'location_name' : self._location_name,
+            'requires_to_open' : self._requires_to_open,
+            'getable' : self._getable,
+            'container' : self._container,
+            'open' : self._open
+        }
 
     # Some getters & setters
     def SetRequiresToOpen(self, requires_to_open):
