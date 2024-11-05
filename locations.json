@@ -27,7 +27,7 @@
     },
     {
         "name": "overgrown_path",
-        "description": "You are on a overgrown north/south path in the woods. The is what appears to be a deep, dark well here.",
+        "description": "You are on a overgrown north/south path in the woods. There is what appears to be a deep, dark well here.",
         "start_location" : false,
         "exits": {
             "down": "bottom_of_well",
