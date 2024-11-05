@@ -399,10 +399,11 @@ class Game(object):
                     if self._items[item_name].GetLocationName() == item.GetItemName():
                         # Set new item location to current location & mark as open
                         self._items[item_name].SetLocationName(self._location.GetLocationName())
-                        self._items[item_name].SetOpen(True)
                     
-                # Update player
+                # Mark item as open and update player
+                self._items[obj].SetOpen(True) 
                 print(f"You open the {obj}.")
+
             else:
                 print(f"Sorry, you don't have what you need to open the {item.GetObject()}.")
         else:
