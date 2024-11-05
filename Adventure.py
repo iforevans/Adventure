@@ -81,7 +81,24 @@ class Item(object):
         self._description = description
 
     def GetDescription(self):
-        return self._description
+        # Are we a container?
+        if self._container:
+            # Yep, are we open?
+            if self._open:
+                # Yep, so describe as open
+                return self._description + f" The {self._name} is open."
+            else:
+                # Nope, describe as closed
+                return self._description + f" The {self._name} is closed."
+        else:
+            # Nope, not a container
+            return self._description
+
+    def SetOpen(self, open):
+        self._open = open
+
+    def GetOpen(self):
+        return self._open
 
     def SetItemName(self, name):
         self._name = name
@@ -254,7 +271,7 @@ class Game(object):
         # Create chest
         item = Item()
         item.SetItemName("chest")
-        item.SetDescription("A very strong, heavy chest. The chest is locked and too heavy to move.")
+        item.SetDescription("A very strong, heavy chest. The chest is far too heavy to move.")
         item.SetWeight(A_VERY_HEAVY)
         item.SetGetable(False)
         item.SetContainer(True)
@@ -380,8 +397,9 @@ class Game(object):
                 # Yep, so open the item, and set all items within to now be in the current location
                 for item_name in self._items:
                     if self._items[item_name].GetLocationName() == item.GetItemName():
-                        # Set new item location to current location
+                        # Set new item location to current location & mark as open
                         self._items[item_name].SetLocationName(self._location.GetLocationName())
+                        self._items[item_name].SetOpen(True)
                     
                 # Update player
                 print(f"You open the {obj}.")
