@@ -246,33 +246,23 @@ class Game(object):
 
 
     def CreateMap(self):
-        # Create Locations. Eventually we will get all these from a map file
-        location = Location(L_INSIDE_CABIN, "You are inside a cabin in the woods.")
-        location.SetExit(D_OUT, L_OUTSIDE_CABIN)
-        self._map[L_INSIDE_CABIN] = location
+        # Read the locations from the JSON file
+        with open(FN_LOCATIONS, 'r') as json_file:
+            locations = json.load(json_file)
 
-        # Create location
-        location = Location(L_OUTSIDE_CABIN, "You are outside a small, wooden cabin in the woods. There is a tree here that looks climable!")
-        location.SetExit(D_IN, L_INSIDE_CABIN)
-        location.SetExit(D_UP, L_TOP_OF_TREE)
-        location.SetExit(D_SOUTH, L_OVERGROWN_PATH)
-        self._map[L_OUTSIDE_CABIN] = location
-
-        # Create location
-        location = Location(L_TOP_OF_TREE, "You are at the very top of a tall tree. The branches are very thin here.")
-        location.SetExit(D_DOWN, L_OUTSIDE_CABIN)
-        self._map[L_TOP_OF_TREE] = location
-
-        # Create location
-        location = Location(L_OVERGROWN_PATH, "You are on a overgrown north/south path in the woods. The is what appears to be a deep, dark well here.")
-        location.SetExit(D_DOWN, L_BOTTOM_OF_WELL)
-        location.SetExit(D_NORTH, L_OUTSIDE_CABIN)
-        self._map[L_OVERGROWN_PATH] = location
-
-        # Create location
-        location = Location(L_BOTTOM_OF_WELL, "You are at the bottom of a very deep, but now dry well. You can just see daylight high overhead.")
-        location.SetExit(D_UP, L_OVERGROWN_PATH)
-        self._map[L_BOTTOM_OF_WELL] = location
+        # Create map from the loaded location dicts
+        for location_dict in locations:
+            # Create the location object
+            location = Location(location_dict["name"], location_dict["description"])
+            
+            # Add any exits
+            exit_dict = location_dict["exits"]
+            if exit_dict is not None:
+                for exit_name in exit_dict:
+                    location.SetExit(exit_name, exit_dict[exit_name])
+            
+            # Add the location to the map
+            self._map[location_dict["name"]] = location
 
         # Create items. These will also come from a data file at some point.
         item = Item()

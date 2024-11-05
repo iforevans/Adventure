@@ -1,0 +1,40 @@
+[
+    {
+        "name": "inside_cabin",
+        "description": "You are inside a cabin in the woods.",
+        "exits": {
+            "out": "outside_cabin"
+        }
+    },
+    {
+        "name": "outside_cabin",
+        "description": "You are outside a small, wooden cabin in the woods. There is a tree here that looks climable!",
+        "exits": {
+            "in": "inside_cabin",
+            "up": "top_of_tree",
+            "south": "overgrown_path"
+        }
+    },
+    {
+        "name": "top_of_tree",
+        "description": "You are at the very top of a tall tree. The branches are very thin here.",
+        "exits": {
+            "down": "outside_cabin"
+        }
+    },
+    {
+        "name": "overgrown_path",
+        "description": "You are on a overgrown north/south path in the woods. The is what appears to be a deep, dark well here.",
+        "exits": {
+            "down": "bottom_of_well",
+            "north": "outside_cabin"
+        }
+    },
+    {
+        "name": "bottom_of_well",
+        "description": "You are at the bottom of a very deep, but now dry well. You can just see daylight high overhead.",
+        "exits": {
+            "up": "overgrown_path"
+        }
+    }
+]
