@@ -384,9 +384,8 @@ class Game(object):
             print("You are not carrying anything!")
 
     def OpenItem(self, item, command):
-        obj = command.GetObject()
-        prep = command.GetPreposition()
         target = command.GetTarget()
+        obj = command.GetObject()
 
         # Do we have the item require to open?
         carried = self.GetCarriedItems()
@@ -405,7 +404,7 @@ class Game(object):
                 print(f"You open the {obj}.")
 
             else:
-                print(f"Sorry, you don't have what you need to open the {item.GetObject()}.")
+                print(f"Sorry, you don't have what you need to open the {obj}.")
         else:
             print(f"You can't open the {item.GetItemName()} with that!")
 
@@ -419,7 +418,7 @@ class Game(object):
         if obj is not None:
             # Yep, valid prep?
             if prep == "with" or prep == "using":
-                item = self._items[command.GetObject()]
+                item = self._items[obj]
                 if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
                     # Is it a container?
                     if item.GetContainer():
