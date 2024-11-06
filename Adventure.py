@@ -300,46 +300,52 @@ class Game(object):
 
     # Move in a valid direction
     def Go(self, command):
-        # Get the direction
-        direction = command.GetObject()
+        verb = command.GetVerb()
+        obj = command.GetObject()
 
-        # Valid?
-        if direction is not None:
+        # Assume the object is the direction
+        if obj is not None:
             # Yep, try and move in that direction
-            new_location_name = self._location.Move(direction)
+            new_location_name = self._location.Move(obj)
             if new_location_name is not None:
                 self._location = self._map[new_location_name]
             else:
-                print(f"You can't go {direction}!")
+                print(f"You can't {verb} {obj}!")
         else:
-            print("Sorry, I don't understand where you want to go...")
+            print(f"Sorry, I don't understand where you want to {verb}...")
 
     # Get an item
     def Get(self, command):
+        verb = command.GetVerb()
+        obj = command.GetObject()
+
         # Did we get a valid object name?
-        if command.GetObject() is not None:
+        if obj is not None:
             # Yep, is it here?
-            item = self._items[command.GetObject()]
+            item = self._items[obj]
             if item.GetLocationName() == self._location.GetLocationName():
                 # Yep, present. Now, is it getable?
                 if item.GetGetable():
                     item.SetLocationName(L_CARRIED)
-                    print(f"You picked up the {item.GetItemName()}")
+                    print(f"You {verb} the {item.GetItemName()}")
                 else:
                     # Nope, not getable
-                    print(f"You can't get the {item.GetItemName()}.")
+                    print(f"You can't {verb} the {item.GetItemName()}.")
             else:
                 # Nope, not present
                 print(f"I don't see a {item.GetItemName()} here!")
         else:
-                print("Sorry, I don't understand what you want to get...")
+                print(f"Sorry, I don't understand what you want to {verb}...")
 
     # Drop an item
     def Drop(self, command):
+        verb = command.GetVerb()
+        obj = command.getObject()
+
         # Do we have a valid object
-        if command.GetObject() is not None:
+        if obj is not None:
             # Yep, so assume the object is an item name
-            item = self._items[command.GetObject()]
+            item = self._items[obj]
 
             # Are we carrying it?
             if item.GetLocationName() == L_CARRIED:
@@ -350,23 +356,26 @@ class Game(object):
                 print(f"You are not carrying a {item.GetItemName()}!")
         else:
             # Nope
-            print("Sorry, I don't understand what you want to drop...")
+            print(f"Sorry, I don't understand what you want to {verb} ...")
 
     # examine an item
     def Examine(self, command):
+        verb = command.GetVerb()
+        obj = command.GetObject()
+
         # Did we get a valid object name?
-        if command.GetObject() is not None:
+        if obj is not None:
             # Yep, is it here?
             item = self._items[command.GetObject()]
             if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
                 # Yep, print the longer description
-                print(f"You examine the {item.GetItemName()}, and see: {item.GetDescription()}")
+                print(f"You {verb} the {item.GetItemName()}, and see: {item.GetDescription()}")
             else:
                 # Nope, not here
                 print(f"I don't see a {item.GetItemName()} anywhere!")
         else:
             # Nope,
-            print("Sorry, I don't understand what you want to examine...")
+            print(f"Sorry, I don't understand what you want to {verb}...")
 
     def GetCarriedItems(self):
         # Build list of all the items we are carrying
@@ -427,6 +436,8 @@ class Game(object):
             # Yep, valid prep?
             if prep == "with" or prep == "using":
                 item = self._items[obj]
+
+                # Is the item here?
                 if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
                     # Is it a container?
                     if item.GetContainer():
@@ -443,6 +454,37 @@ class Game(object):
             # Nope,
             print(f"Sorry, I don't understand what you want to {verb}...")
 
+    def Close(self, command):
+        verb = command.GetVerb()
+        obj = command.GetObject()
+
+        # Did we get a valid object name?
+        if obj is not None:
+            # Yep, get the item
+            item = self._items[obj]
+
+            # Is the item present?
+            if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
+                # Yep, is it a container?
+                if item.GetContainer():
+                    # Is it open?
+                    if item.GetOpen():
+                        item.SetOpen(False)
+                        print(f"You {verb} the {item.GetItemName()}")
+                    else:
+                        print(f"The {item.GetItemName()} is already closed.")
+                else:
+                    # Nope, not a container
+                    print(f"You can't {verb} the {item.GetItemName()}!")
+
+            else:
+                # Nope, not here
+                print(f"I don't see a {item.GetItemName()} anywhere!")
+        else:
+            # Nope,
+            print(f"Sorry, I don't understand what you want to {verb}...")
+
+
     def DoCommand(self, command):
         # Do this just once. DRY.
         verb = command.GetVerb()
@@ -457,6 +499,8 @@ class Game(object):
             self.Drop(command)
         elif verb == "open" or verb == "unlock":
             self.Open(command)
+        elif verb == "close":
+            self.Close(command)
         elif verb == "examine":
             self.Examine(command)
         elif verb == "inventory":
