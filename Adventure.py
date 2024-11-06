@@ -421,7 +421,6 @@ class Game(object):
         verb = command.GetVerb()
         obj = command.GetObject()
         prep = command.GetPreposition()
-        target = command.GetTarget()
 
         # Did we get a valid object name?
         if obj is not None:
