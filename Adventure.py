@@ -187,7 +187,7 @@ class Parser(object):
         # Valid verbs
         self._verbs = [
             'go', 'get', 'drop', 'examine', 'inventory',
-            'examine', 'open', 'close', 'attack', 'inventory',
+            'unlock', 'lock', 'open', 'close', 'attack',
             'put', 'take', 'help', 'quit'
         ]
         
@@ -391,6 +391,7 @@ class Game(object):
             print("You are not carrying anything!")
 
     def OpenItem(self, item, command):
+        verb = command.GetVerb()
         target = command.GetTarget()
         obj = command.GetObject()
 
@@ -408,15 +409,16 @@ class Game(object):
                     
                 # Mark item as open and update player
                 self._items[obj].SetOpen(True) 
-                print(f"You open the {obj}.")
+                print(f"You {verb} the {obj}.")
 
             else:
-                print(f"Sorry, you don't have what you need to open the {obj}.")
+                print(f"Sorry, you don't have what you need to {verb} the {obj}.")
         else:
-            print(f"You can't open the {item.GetItemName()} with that!")
+            print(f"You can't {verb} the {item.GetItemName()} with that!")
 
 
     def Open(self, command):
+        verb = command.GetVerb()
         obj = command.GetObject()
         prep = command.GetPreposition()
         target = command.GetTarget()
@@ -432,15 +434,15 @@ class Game(object):
                         self.OpenItem(item, command)
                     else:
                         # Nope, not a container
-                        print(f"You can't open the {item.GetItemName()}!")
+                        print(f"You can't {verb} the {item.GetItemName()}!")
                 else:
                     # Nope, not here
                     print(f"I don't see a {item.GetItemName()} anywhere!")
             else:
-                print("Sorry, how do you want to open the chest?")
+                print(f"Sorry, how do you want to {verb} the chest?")
         else:
             # Nope,
-            print("Sorry, I don't understand what you want to open...")
+            print(f"Sorry, I don't understand what you want to {verb}...")
 
     def DoCommand(self, command):
         # Do this just once. DRY.
@@ -454,7 +456,7 @@ class Game(object):
             self.Get(command)
         elif verb == "drop":
             self.Drop(command)
-        elif verb == "open": 
+        elif verb == "open" or verb == "unlock":
             self.Open(command)
         elif verb == "examine":
             self.Examine(command)

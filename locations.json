@@ -1,7 +1,7 @@
 [
     {
         "name": "inside_cabin",
-        "description": "You are inside a cabin in the woods.",
+        "description": "You are inside a cabin in the forest.",
         "start_location" : true,
         "exits": {
             "out": "outside_cabin"
@@ -9,7 +9,7 @@
     },
     {
         "name": "outside_cabin",
-        "description": "You are outside a small, wooden cabin in the woods. There is a tree here that looks climable!",
+        "description": "You are outside a small, wooden cabin in the forest. There is a tree here that looks climable!",
         "start_location" : false,
         "exits": {
             "in": "inside_cabin",
@@ -27,11 +27,12 @@
     },
     {
         "name": "overgrown_path",
-        "description": "You are on a overgrown north/south path in the woods. There is what appears to be a deep, dark well here.",
+        "description": "You are on a overgrown north/south path in the forest. There is what appears to be a deep, dark well here.",
         "start_location" : false,
         "exits": {
             "down": "bottom_of_well",
-            "north": "outside_cabin"
+            "north": "outside_cabin",
+            "south": "south_of_forest"          
         }
     },
     {
@@ -40,6 +41,32 @@
         "start_location" : false,
         "exits": {
             "up": "overgrown_path"
+        }
+    },
+    {
+        "name": "south_of_forest",
+        "description": "You are on the edge of a dark, forbidding forest. An almost hidden, overgrown path heads north. The path splits here and continues east and west to follow the edge of the forest.",
+        "start_location" : false,
+        "exits": {
+            "north": "overgrown_path",
+            "west" : "west_of_forest",
+            "east" : "east_of_forest"
+        }
+    },
+    {
+        "name": "west_of_forest",
+        "description": "You are on the west side of a dark, forbidding forest.",
+        "start_location" : false,
+        "exits": {
+            "east": "south_of_forest"
+        }
+    },
+    {
+        "name": "east_of_forest",
+        "description": "You are on the east side of a dark, forbidding forest.",
+        "start_location" : false,
+        "exits": {
+            "west": "south_of_forest"
         }
     }
 ]
