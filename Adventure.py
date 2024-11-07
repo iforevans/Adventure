@@ -431,7 +431,7 @@ class Game(object):
             else:
                 print(f"Sorry, you don't have what you need to {verb} the {obj}.")
         else:
-            print(f"You can't {verb} the {item.GetItemName()} with that!")
+            print(f"You can't {verb} the {obj} with that!")
 
 
     def Open(self, command):
@@ -478,16 +478,16 @@ class Game(object):
                     # Is it open?
                     if item.GetOpen():
                         item.SetOpen(False)
-                        print(f"You {verb} the {item.GetItemName()}")
+                        print(f"You {verb} the {obj}")
                     else:
-                        print(f"The {item.GetItemName()} is already closed.")
+                        print(f"The {obj} is already closed.")
                 else:
                     # Nope, not a container
-                    print(f"You can't {verb} the {item.GetItemName()}!")
+                    print(f"You can't {verb} the {obj}!")
 
             else:
                 # Nope, not here
-                print(f"I don't see a {item.GetItemName()} anywhere!")
+                print(f"I don't see a {obj} anywhere!")
         else:
             # Nope,
             print(f"Sorry, I don't understand what you want to {verb}...")
