@@ -452,12 +452,12 @@ class Game(object):
                         self.OpenItem(item, command)
                     else:
                         # Nope, not a container
-                        print(f"You can't {verb} the {item.GetItemName()}!")
+                        print(f"You can't {verb} the {obj}!")
                 else:
                     # Nope, not here
-                    print(f"I don't see a {item.GetItemName()} anywhere!")
+                    print(f"I don't see a {obj} anywhere!")
             else:
-                print(f"Sorry, how do you want to {verb} the chest?")
+                print(f"Sorry, how do you want to {verb} the {obj}?")
         else:
             # Nope,
             print(f"Sorry, I don't understand what you want to {verb}...")
