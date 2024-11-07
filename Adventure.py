@@ -411,15 +411,23 @@ class Game(object):
         if target == item.GetRequiresToOpen():                
             if item.GetRequiresToOpen() in carried:
                 # Yep, so open the item, and set all items within to now be in the current location
+                # List to hold the items that were inside
+                inside = []
                 for item_name in self._items:
                     if self._items[item_name].GetLocationName() == item.GetItemName():
                         # Set new item location to current location & mark as open
                         self._items[item_name].SetLocationName(self._location.GetLocationName())
+                        inside.append(item_name)
                     
                 # Mark item as open and update player
                 self._items[obj].SetOpen(True) 
                 print(f"You {verb} the {obj}.")
-
+                
+                # Tell player what was inside
+                print(f"Inside the {obj} you find: ", end=" ")
+                for item_name in inside:
+                    print(f"{item_name}", end=" ")
+                print()
             else:
                 print(f"Sorry, you don't have what you need to {verb} the {obj}.")
         else:
