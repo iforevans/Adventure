@@ -500,6 +500,8 @@ class Game(object):
             # Nope,
             print(f"Sorry, I don't understand what you want to {verb}...")
 
+    def Unlock(self, command):
+        pass
 
     def DoCommand(self, command):
         # Do this just once. DRY.
@@ -515,6 +517,8 @@ class Game(object):
             self.Drop(command)
         elif verb == "open":
             self.Open(command)
+        elif verb == "unlock":
+            self.Unlock()
         elif verb == "close":
             self.Close(command)
         elif verb == "examine":
