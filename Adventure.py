@@ -87,6 +87,7 @@ class Item(object):
         self._getable = False
         self._container = False
         self._open = False
+        self._locked = False
 
     def ToDict(self):
         # Convert the item objects to a dictionary
@@ -98,10 +99,17 @@ class Item(object):
             'getable' : self._getable,
             'container' : self._container,
             'requires_to_open' : self._requires_to_open,
-            'open' : self._open
+            'open' : self._open,
+            'locked': self._locked
         }
 
     # Some getters & setters
+    def SetLocked(self, locked):
+        self._locked = locked
+
+    def GetLocked(self, locked):
+        self._locked = locked
+
     def SetRequiresToOpen(self, requires_to_open):
         self._requires_to_open = requires_to_open
 
@@ -505,7 +513,7 @@ class Game(object):
             self.Get(command)
         elif verb == "drop":
             self.Drop(command)
-        elif verb == "open" or verb == "unlock":
+        elif verb == "open":
             self.Open(command)
         elif verb == "close":
             self.Close(command)

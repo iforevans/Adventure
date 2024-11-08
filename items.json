@@ -6,8 +6,9 @@
         "location_name": "inside_cabin",
         "getable": true,
         "container": false,
-        "requires_to_open": "",
-        "open": false
+        "requires_to_unlock": "",
+        "open": false,
+        "locked": false
     },
     {
         "name": "key",
@@ -16,8 +17,9 @@
         "location_name": "top_of_tree",
         "getable": true,
         "container": false,
-        "requires_to_open": "",
-        "open": false
+        "requires_to_unlock": "",
+        "open": false,
+        "locked": false
     },
     {
         "name": "chest",
@@ -26,8 +28,9 @@
         "location_name": "bottom_of_well",
         "getable": false,
         "container": true,
-        "requires_to_open": "key",
-        "open": false
+        "requires_to_unlock": "key",
+        "open": false,
+        "locked": true
     },
     {
         "name": "sword",
@@ -36,7 +39,8 @@
         "location_name": "chest",
         "getable": true,
         "container": false,
-        "requires_to_open": "",
-        "open": false
+        "requires_to_unlock": "",
+        "open": false,
+        "locked": false
     }
 ]
