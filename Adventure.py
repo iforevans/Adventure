@@ -508,7 +508,7 @@ class Game(object):
         target = command.GetTarget()
 
         # Did we get a valid object name?
-        if obj is not None:
+        if obj is not None and target is not None:
             # Yep, valid prep?
             if prep == "with" or prep == "using":
                 item = self._items[obj]
@@ -525,7 +525,7 @@ class Game(object):
                                 # is the target the right item to unlock the item?
                                 if item.GetRequiresToUnlock() == target:
                                     # Yep, so unlock
-                                    item.SetLocked(false)
+                                    item.SetLocked(False)
                                     print(f"You {verb} the {obj}.")
                                 else:
                                     print(f"You can't {verb} the {obj} with the {target}")
@@ -544,7 +544,7 @@ class Game(object):
                 print(f"Sorry, how do you want to {verb} the {obj}?")
         else:
             # Nope,
-            print(f"Sorry, I don't understand what you want to {verb}...")
+            print(f"Sorry, I don't understand what you want to do...")
 
 
     def DoCommand(self, command):
