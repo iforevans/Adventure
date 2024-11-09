@@ -508,43 +508,46 @@ class Game(object):
         target = command.GetTarget()
 
         # Did we get a valid object name?
-        if obj is not None and target is not None:
-            # Yep, valid prep?
-            if prep == "with" or prep == "using":
-                item = self._items[obj]
+        if obj is not None:
+            if target is not None:
+                # Yep, valid prep?
+                if prep == "with" or prep == "using":
+                    item = self._items[obj]
 
-                # Is the item here?
-                if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
-                    # Is it a container?
-                    if item.GetContainer():
-                        # Yep. Is it locked?
-                        if item.GetLocked():
-                            # Is the target item here?
-                            target_item = self._items[target]
-                            if target_item.GetLocationName() == self._location.GetLocationName() or target_item.GetLocationName() == L_CARRIED:
-                                # is the target the right item to unlock the item?
-                                if item.GetRequiresToUnlock() == target:
-                                    # Yep, so unlock
-                                    item.SetLocked(False)
-                                    print(f"You {verb} the {obj}.")
+                    # Is the item here?
+                    if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
+                        # Is it a container?
+                        if item.GetContainer():
+                            # Yep. Is it locked?
+                            if item.GetLocked():
+                                # Is the target item here?
+                                target_item = self._items[target]
+                                if target_item.GetLocationName() == self._location.GetLocationName() or target_item.GetLocationName() == L_CARRIED:
+                                    # is the target the right item to unlock the item?
+                                    if item.GetRequiresToUnlock() == target:
+                                        # Yep, so unlock
+                                        item.SetLocked(False)
+                                        print(f"You {verb} the {obj}.")
+                                    else:
+                                        print(f"You can't {verb} the {obj} with the {target}")
                                 else:
-                                    print(f"You can't {verb} the {obj} with the {target}")
+                                    # Nope, not here
+                                    print(f"I don't see a {target} anywhere!")
                             else:
-                                # Nope, not here
-                                print(f"I don't see a {target} anywhere!")
+                                print(f"You can't {verb} the {obj}. It's already been done.")
                         else:
-                            print(f"You can't {verb} the {obj}. It's already been done.")
+                            # Nope, not a container
+                            print(f"You can't {verb} the {obj}!")
                     else:
-                        # Nope, not a container
-                        print(f"You can't {verb} the {obj}!")
+                        # Nope, not here
+                        print(f"I don't see a {obj} anywhere!")
                 else:
-                    # Nope, not here
-                    print(f"I don't see a {obj} anywhere!")
+                    print(f"Sorry, how do you want to {verb} the {obj}?")
             else:
-                print(f"Sorry, how do you want to {verb} the {obj}?")
+                print(f"Sorry, I don't understand what you want to use to {verb} the {obj}.")
         else:
             # Nope,
-            print(f"Sorry, I don't understand what you want to do...")
+            print(f"Sorry, I don't understand what you want to {verb}...")
 
 
     def DoCommand(self, command):
