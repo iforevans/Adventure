@@ -530,7 +530,35 @@ class Game(object):
             print(f"Sorry, I don't understand what you want to {verb}...")
 
     def Lock(self, command):
-        pass
+        verb = command.GetVerb()
+        obj = command.GetObject()
+
+        # Did we get a valid object name?
+        if obj is not None:
+            # Yep, get the item
+            item = self._items[obj]
+
+            # Is the item present?
+            if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
+                # Yep, is it a container?
+                if item.GetContainer():
+                    # Is it open?
+                    if not item.GetOpen():
+                        item.SetLocked(True)
+                        print(f"You {verb} the {obj}")
+                    else:
+                        # Nope
+                        print(f"You can't {verb} the {obj} while it is open.")
+                else:
+                    # Nope, not a container
+                    print(f"You can't {verb} the {obj}!")
+
+            else:
+                # Nope, not here
+                print(f"I don't see a {obj} anywhere!")
+        else:
+            # Nope,
+            print(f"Sorry, I don't understand what you want to {verb}...")
 
 
     def DoCommand(self, command):
