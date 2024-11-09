@@ -590,14 +590,21 @@ class Game(object):
             # Describe the location
             self._location.Describe()
 
-            # Show list of items here
-            print("You can see the following items here:", end=" ")
+            # Make a list of all the items that are in our current location
+            here = []
             for item_name in self._items:
                 item = self._items[item_name]
                 if item.GetLocationName() == self._location.GetLocationName():
-                    print(item_name, end=" ")
-            print()
+                    here.append(item_name)
 
+            if len(here) > 0:
+                # Show list of items here
+                print("You can see the following items here:", end=" ")
+                for item_name in here:
+                    print(item_name, end=" ")
+                print()
+            else:
+                print("There is nothing here.")
 
     # Main run method
     def Run(self):
