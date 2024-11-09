@@ -83,11 +83,11 @@ class Item(object):
         self._description = ""
         self._weight = 0
         self._location_name = ""
-        self._requires_to_open = ""
         self._getable = False
         self._container = False
         self._open = False
         self._locked = False
+        self._requires_to_unlock = ""
 
     def ToDict(self):
         # Convert the item objects to a dictionary
@@ -98,23 +98,23 @@ class Item(object):
             'location_name' : self._location_name,
             'getable' : self._getable,
             'container' : self._container,
-            'requires_to_open' : self._requires_to_open,
             'open' : self._open,
-            'locked': self._locked
+            'locked': self._locked,
+            'requires_to_unlock' : self._requires_to_unlock
         }
 
     # Some getters & setters
     def SetLocked(self, locked):
         self._locked = locked
 
-    def GetLocked(self, locked):
-        self._locked = locked
+    def GetLocked(self):
+        return self._locked
 
-    def SetRequiresToOpen(self, requires_to_open):
-        self._requires_to_open = requires_to_open
+    def SetRequiresToUnlock(self, requires_to_unlock):
+        self._requires_to_unlock = requires_to_unlock
 
-    def GetRequiresToOpen(self):
-        return self._requires_to_open
+    def GetRequiresToUnlock(self):
+        return self._requires_to_unlock
 
     def SetDescription(self, description):
         self._description = description
@@ -272,8 +272,9 @@ class Game(object):
             item.SetLocationName(item_dict["location_name"])
             item.SetGetable(item_dict["getable"])
             item.SetContainer(item_dict["container"])
-            item.SetRequiresToOpen(item_dict["requires_to_open"])
             item.SetOpen(item_dict["open"])
+            item.SetLocked(item_dict["locked"])
+            item.SetRequiresToUnlock(item_dict["requires_to_unlock"])
 
             # Add item
             self._items[item_dict["name"]] = item
@@ -501,7 +502,50 @@ class Game(object):
             print(f"Sorry, I don't understand what you want to {verb}...")
 
     def Unlock(self, command):
-        pass
+        verb = command.GetVerb()
+        obj = command.GetObject()
+        prep = command.GetPreposition()
+        target = command.GetTarget()
+
+        # Did we get a valid object name?
+        if obj is not None:
+            # Yep, valid prep?
+            if prep == "with" or prep == "using":
+                item = self._items[obj]
+
+                # Is the item here?
+                if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
+                    # Is it a container?
+                    if item.GetContainer():
+                        # Yep. Is it locked?
+                        if item.GetLocked():
+                            # Is the target item here?
+                            target_item = self._items[target]
+                            if target_item.GetLocationName() == self._location.GetLocationName() or target_item.GetLocationName() == L_CARRIED:
+                                # is the target the right item to unlock the item?
+                                if item.GetRequiresToUnlock() == target:
+                                    # Yep, so unlock
+                                    item.SetLocked(false)
+                                    print(f"You {verb} the {obj}.")
+                                else:
+                                    print(f"You can't {verb} the {obj} with the {target}")
+                            else:
+                                # Nope, not here
+                                print(f"I don't see a {target} anywhere!")
+                        else:
+                            print(f"You can't {verb} the {obj}. It's already been done.")
+                    else:
+                        # Nope, not a container
+                        print(f"You can't {verb} the {obj}!")
+                else:
+                    # Nope, not here
+                    print(f"I don't see a {obj} anywhere!")
+            else:
+                print(f"Sorry, how do you want to {verb} the {obj}?")
+        else:
+            # Nope,
+            print(f"Sorry, I don't understand what you want to {verb}...")
+
 
     def DoCommand(self, command):
         # Do this just once. DRY.
@@ -518,7 +562,7 @@ class Game(object):
         elif verb == "open":
             self.Open(command)
         elif verb == "unlock":
-            self.Unlock()
+            self.Unlock(command)
         elif verb == "close":
             self.Close(command)
         elif verb == "examine":
