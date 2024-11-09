@@ -128,7 +128,7 @@ class Item(object):
                 return self._description + f" The {self._name} is open."
             else:
                 # Nope, describe as closed
-                return self._description + f" The {self._name} is closed."
+                return self._description + f" The {self._name} is closed." 
         else:
             # Nope, not a container
             return self._description
@@ -408,65 +408,45 @@ class Game(object):
         else:
             print("You are not carrying anything!")
 
-    def OpenItem(self, item, command):
-        verb = command.GetVerb()
-        target = command.GetTarget()
-        obj = command.GetObject()
-
-        # Do we have the item require to open?
-        carried = self.GetCarriedItems()
-
-        # Has the player tried to use the correct item to open?
-        if target == item.GetRequiresToOpen():                
-            if item.GetRequiresToOpen() in carried:
-                # Yep, so open the item, and set all items within to now be in the current location
-                # List to hold the items that were inside
-                inside = []
-                for item_name in self._items:
-                    if self._items[item_name].GetLocationName() == item.GetItemName():
-                        # Set new item location to current location & mark as open
-                        self._items[item_name].SetLocationName(self._location.GetLocationName())
-                        inside.append(item_name)
-                    
-                # Mark item as open and update player
-                self._items[obj].SetOpen(True) 
-                print(f"You {verb} the {obj}.")
-                
-                # Tell player what was inside
-                print(f"Inside the {obj} you find: ", end=" ")
-                for item_name in inside:
-                    print(f"{item_name}", end=" ")
-                print()
-            else:
-                print(f"Sorry, you don't have what you need to {verb} the {obj}.")
-        else:
-            print(f"You can't {verb} the {obj} with that!")
-
-
     def Open(self, command):
         verb = command.GetVerb()
         obj = command.GetObject()
-        prep = command.GetPreposition()
 
         # Did we get a valid object name?
         if obj is not None:
-            # Yep, valid prep?
-            if prep == "with" or prep == "using":
-                item = self._items[obj]
+            # Get a handle to the requested item
+            item = self._items[obj]
 
-                # Is the item here?
-                if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
-                    # Is it a container?
-                    if item.GetContainer():
-                        self.OpenItem(item, command)
+            # Is the item here?
+            if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
+                # Is it a container?
+                if item.GetContainer():
+                    # Is it locked?
+                    if not item.GetLocked():
+                        inside = []
+                        for item_name in self._items:
+                            if self._items[item_name].GetLocationName() == item.GetItemName():
+                                # Set new item location to current location & mark as open
+                                self._items[item_name].SetLocationName(self._location.GetLocationName())
+                                inside.append(item_name)
+                    
+                        # Mark item as open and update player
+                        self._items[obj].SetOpen(True) 
+                        print(f"You {verb} the {obj}.")
+                
+                        # Tell player what was inside
+                        print(f"Inside the {obj} you find: ", end=" ")
+                        for item_name in inside:
+                            print(f"{item_name}", end=" ")
+                        print()
                     else:
-                        # Nope, not a container
-                        print(f"You can't {verb} the {obj}!")
+                        print(f"You can't {verb} the {obj}. It is locked.")
                 else:
-                    # Nope, not here
-                    print(f"I don't see a {obj} anywhere!")
+                    # Nope, not a container
+                    print(f"You can't {verb} the {obj}!")
             else:
-                print(f"Sorry, how do you want to {verb} the {obj}?")
+                # Nope, not here
+                print(f"I don't see a {obj} anywhere!")
         else:
             # Nope,
             print(f"Sorry, I don't understand what you want to {verb}...")
