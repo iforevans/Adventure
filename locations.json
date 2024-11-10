@@ -16,7 +16,7 @@
             "up": "top_of_tree",
             "south": "overgrown_path"
         },
-        "blocked_exits": {
+        "blocked_exit": {
             "down": "cabin_basement",
             "verb": "break",
             "object": "sledge-hammer"
