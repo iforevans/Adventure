@@ -5,6 +5,13 @@
         "start_location" : true,
         "exits": {
             "out": "outside_cabin"
+        },
+        "blocked_exits": {
+            "desc": "A trapdoor. It looks pretty sturdy. There doesn't seem to be a handle to open it with.",
+            "alt_desc": "A broken trapdoor. There is room to squeeze through the broken planks.",
+            "down": "cabin_basement",
+            "verb": "break",
+            "object": "sledge-hammer"
         }
     },
     {
@@ -15,11 +22,6 @@
             "in": "inside_cabin",
             "up": "top_of_tree",
             "south": "overgrown_path"
-        },
-        "blocked_exits": {
-            "down": "cabin_basement",
-            "verb": "break",
-            "object": "sledge-hammer"
         }
     },
     {
