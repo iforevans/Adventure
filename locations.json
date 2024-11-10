@@ -11,7 +11,7 @@
             "alt_desc": "A broken trapdoor. There is room to squeeze through the broken planks.",
             "down": "cabin_basement",
             "verb": "break",
-            "object": "sledge-hammer"
+            "object": "sledgehammer"
         }
     },
     {

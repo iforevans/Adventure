@@ -29,6 +29,7 @@ class Location(object):
         self._description = description
         self._start_location = False
         self._exits = {}
+        self._blocked_exit = {}
 
     def ToDict(self):
         # Convert the Location instance to a dictionary
@@ -36,10 +37,17 @@ class Location(object):
             'name': self._name,
             'description': self._description,
             'start_location' : self._start_location,
-            'exits': self._exits
+            'exits': self._exits,
+            'blocked_exit': self._blocked_exit
         }
 
-    # Set an exit from this location
+    # Getters & Setters
+    def SetBlockedExit(self, blocked_exit):
+        self._blocked_exit = blocked_exit
+
+    def GetBlockedExit(self):
+        return self._blocked_exit
+    
     def SetExit(self, direction, name):
         self._exits[direction] = name
 
@@ -299,6 +307,11 @@ class Game(object):
             if exit_dict is not None:
                 for exit_name in exit_dict:
                     location.SetExit(exit_name, exit_dict[exit_name])
+
+            # Is there a blocked exit?
+            if location_dict["blocked_exit"] is not None:
+                # Yep,
+                pass
             
             # Check if this location is the start location
             if location.GetStartLocation():
