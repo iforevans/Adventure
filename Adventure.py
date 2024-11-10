@@ -71,12 +71,14 @@ class Location(object):
 
             #   Print a blank, seperator line
             print()
-        # Any blocked exits?
-        elif self._blocked_exit is not None:
-            print(f"There is also {self._blocked_exit["desc"]}")
         else:
             # Doesn't look good for the player!
             print("Uh ho. There doesn't seem to be any way out of here!")
+        
+        # Any blocked exits?
+        if self._blocked_exit is not None:
+            # Yep
+            print(f"There is also {self._blocked_exit["desc"]}")
             
     # Get the location name
     def GetLocationName(self):
@@ -313,10 +315,10 @@ class Game(object):
                 for exit_name in exit_dict:
                     location.SetExit(exit_name, exit_dict[exit_name])
 
-            # Is there a blocked exit?
+            # Is there a blocked exit for this location?
             if "blocked_exit" in location_dict:
                 # Yep,
-                self._blocked_exit = location_dict["blocked_exit"]
+                location.SetBlockedExit(location_dict["blocked_exit"])
                 
             # Check if this location is the start location
             if location.GetStartLocation():
