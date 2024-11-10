@@ -6,7 +6,7 @@
         "exits": {
             "out": "outside_cabin"
         },
-        "blocked_exits": {
+        "blocked_exit": {
             "desc": "A trapdoor. It looks pretty sturdy. There doesn't seem to be a handle to open it with.",
             "alt_desc": "A broken trapdoor. There is room to squeeze through the broken planks.",
             "down": "cabin_basement",
