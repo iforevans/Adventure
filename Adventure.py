@@ -229,6 +229,27 @@ class Parser(object):
         self._item_names = []
         self._blocked_exit_names = []
 
+    # Various checks
+    def IsVerb(self, obj):
+        if obj in self._verbs:
+            return True
+        return False
+
+    def IsDirection(self, obj):
+        if obj in self._directions:
+            return True
+        return False
+
+    def IsItem(self, obj):
+        if obj in self._item_names:
+            return True
+        return False
+
+    def IsBlockedExit(self, obj):
+        if obj in self._blocked_exit_names:
+            return True
+        return False
+
     # Add an known item
     def AddItemName(self, item_name):
         self._item_names.append(item_name)
@@ -359,7 +380,7 @@ class Game(object):
         # Did we get a valid object name?
         if obj is not None:
             # Yep, are we trying to get a valid item?
-            if obj in self._items:
+            if self._parser.IsItem(obj):
                 item = self._items[obj]
                 if item.GetLocationName() == self._location.GetLocationName():
                     # Yep, present. Now, is it getable?
@@ -412,7 +433,8 @@ class Game(object):
         # Did we get a valid object name?
         if obj is not None:
             # Yep, is it an item?
-            if obj in self._items:
+            if self._parser.IsItem(obj):
+                # It's an item
                 item = self._items[obj]
                 if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
                     # Yep, print the longer description
@@ -420,6 +442,10 @@ class Game(object):
                 else:
                     # Nope, not here
                     print(f"I don't see a {obj} anywhere!")
+            # Is it a direction?
+            elif self._parser.IsDirection(obj):
+                # Yep. 
+                print(f"You want to {verb} {obj}? Weird ...")
             else:
                 print(f"You {verb} the {obj} but don't see anything more...")
         else:
@@ -499,7 +525,7 @@ class Game(object):
             else:
                 # Nope can't open that
                 # TODO
-                pass
+                print(f"You can't {verb} the {obj}...")
         else:
             # Nope,
             print(f"Sorry, I don't understand what you want to {verb}...")
