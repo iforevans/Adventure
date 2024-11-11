@@ -428,7 +428,7 @@ class Game(object):
         else:
             print("You are not carrying anything!")
 
-    def Open(self, command):
+    def OpenItem(self, command):
         verb = command.GetVerb()
         obj = command.GetObject()
 
@@ -470,6 +470,20 @@ class Game(object):
         else:
             # Nope,
             print(f"Sorry, I don't understand what you want to {verb}...")
+
+
+    def Open(self, command):
+        verb = command.GetVerb()
+        obj = command.GetObject()
+
+        # Did we get a valid object name?
+        if obj is not None:
+            # Yep, player is trying to open an item
+            self.OpenItem(command)
+        else:
+            # Is the player trying to open a blocked exit?
+            pass
+
 
     def Close(self, command):
         verb = command.GetVerb()
