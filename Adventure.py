@@ -486,19 +486,23 @@ class Game(object):
             # Nope, not here
             print(f"I don't see a {obj} anywhere!")
 
-
     def Open(self, command):
         verb = command.GetVerb()
         obj = command.GetObject()
 
         # Did we get a valid object name?
         if obj is not None:
-            # Yep, player is trying to open an item
-            self.OpenItem(command)
+            # Yep. Is it an item?
+            if obj in self._items:
+                # Yep, deal with it.
+                self.OpenItem(command)
+            else:
+                # Nope can't open that
+                # TODO
+                pass
         else:
             # Nope,
             print(f"Sorry, I don't understand what you want to {verb}...")
-
 
     def Close(self, command):
         verb = command.GetVerb()
