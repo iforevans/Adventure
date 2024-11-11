@@ -225,12 +225,17 @@ class Parser(object):
             'using', 'into'
         ]
 
-        # This should be added to as objects are created
-        self._objects = []
+        # These list will hold valid names of things in our world
+        self._item_names = []
+        self._blocked_exit_names = []
 
-    # Add an object to our objects list
-    def AddObject(self, object_name):
-        self._objects.append(object_name)
+    # Add an known item
+    def AddItemName(self, item_name):
+        self._item_names.append(item_name)
+
+    # Add a known blocked exit name
+    def AddBlockedExitName(self, blocked_exit_name):
+        self._blocked_exit_names.append(blocked_exit_name)
 
     # Parse the user input
     def ParseInput(self, user_input):
@@ -246,7 +251,7 @@ class Parser(object):
         for word in tokens:
             if not verb and word in self._verbs:
                 verb = word
-            elif not obj and (word in self._objects or word in self._directions):
+            elif not obj and (word in self._item_names or word in self._blocked_exit_names or word in self._directions):
                 obj = word
             elif not prep and word in self._prepositions:
                 prep = word
@@ -292,7 +297,7 @@ class Game(object):
 
             # Add item
             self._items[item_dict["name"]] = item
-            self._parser.AddObject(item_dict["name"])
+            self._parser.AddItemName(item_dict["name"])
 
     
     def CreateMap(self):
@@ -310,15 +315,18 @@ class Game(object):
 
             # Any exits
             if "exits" in location_dict: 
-                # Yep
-                exit_dict = location_dict["exits"]
-                for exit_name in exit_dict:
-                    location.SetExit(exit_name, exit_dict[exit_name])
+                # Yep, so add it
+                exits_dict = location_dict["exits"]
+                for exit_name in exits_dict:
+                    location.SetExit(exit_name, exits_dict[exit_name])
 
             # Is there a blocked exit for this location?
             if "blocked_exit" in location_dict:
-                # Yep,
-                location.SetBlockedExit(location_dict["blocked_exit"])
+                # Yep, add it
+                blocked_exit_dict = location_dict["blocked_exit"]
+                location.SetBlockedExit(blocked_exit_dict)
+                self._parser.AddBlockedExitName(blocked_exit_dict["name"])
+
                 
             # Check if this location is the start location
             if location.GetStartLocation():
@@ -350,58 +358,70 @@ class Game(object):
 
         # Did we get a valid object name?
         if obj is not None:
-            # Yep, is it here?
-            item = self._items[obj]
-            if item.GetLocationName() == self._location.GetLocationName():
-                # Yep, present. Now, is it getable?
-                if item.GetGetable():
-                    item.SetLocationName(L_CARRIED)
-                    print(f"You {verb} the {item.GetItemName()}")
+            # Yep, are we trying to get a valid item?
+            if obj in self._items:
+                item = self._items[obj]
+                if item.GetLocationName() == self._location.GetLocationName():
+                    # Yep, present. Now, is it getable?
+                    if item.GetGetable():
+                        item.SetLocationName(L_CARRIED)
+                        print(f"You {verb} the {obj}")
+                    else:
+                        # Nope, not getable
+                        print(f"You can't {verb} the {obj}...")
                 else:
-                    # Nope, not getable
-                    print(f"You can't {verb} the {item.GetItemName()}.")
+                    # Nope, not present
+                    print(f"I don't see a {obj} here!")
             else:
-                # Nope, not present
-                print(f"I don't see a {item.GetItemName()} here!")
+                # Nope, not an item
+                print(f"You can't {verb} the {obj}...")
         else:
                 print(f"Sorry, I don't understand what you want to {verb}...")
 
     # Drop an item
     def Drop(self, command):
         verb = command.GetVerb()
-        obj = command.getObject()
+        obj = command.GetObject()
 
         # Do we have a valid object
         if obj is not None:
-            # Yep, so assume the object is an item name
-            item = self._items[obj]
+            # Yep, is it a valid item
+            if obj in self._items:
+                # Yep, 
+                item = self._items[obj]
 
-            # Are we carrying it?
-            if item.GetLocationName() == L_CARRIED:
-                # Yep, so set the item's locstion to the current location
-                item.SetLocationName(self._location.GetLocationName())
+                # Are we carrying it?
+                if item.GetLocationName() == L_CARRIED:
+                    # Yep, so set the item's locstion to the current location
+                    item.SetLocationName(self._location.GetLocationName())
+                else:
+                    # Nope, don't have it
+                    print(f"You are not carrying a {item.GetItemName()}!")
             else:
-                # Nope, don't have it
-                print(f"You are not carrying a {item.GetItemName()}!")
+                # Nope, not an item
+                print(f"You can't {verb} the {obj}...")
         else:
-            # Nope
+            # Nope, no valid object specified
             print(f"Sorry, I don't understand what you want to {verb} ...")
 
-    # examine an item
+    # Examine an item
     def Examine(self, command):
         verb = command.GetVerb()
         obj = command.GetObject()
 
         # Did we get a valid object name?
         if obj is not None:
-            # Yep, is it here?
-            item = self._items[command.GetObject()]
-            if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
-                # Yep, print the longer description
-                print(f"You {verb} the {item.GetItemName()}, and see: {item.GetDescription()}")
+            # Yep, is it an item?
+            if obj in self._items:
+                item = self._items[obj]
+                if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
+                    # Yep, print the longer description
+                    print(f"You {verb} the {obj}, and see: {item.GetDescription()}")
+                else:
+                    # Nope, not here
+                    print(f"I don't see a {obj} anywhere!")
             else:
-                # Nope, not here
-                print(f"I don't see a {item.GetItemName()} anywhere!")
+                print(f"You {verb} the {obj} but don't see anything more...")
         else:
             # Nope,
             print(f"Sorry, I don't understand what you want to {verb}...")
@@ -432,44 +452,39 @@ class Game(object):
         verb = command.GetVerb()
         obj = command.GetObject()
 
-        # Did we get a valid object name?
-        if obj is not None:
-            # Get a handle to the requested item
-            item = self._items[obj]
+        # Get a handle to the requested item
+        item = self._items[obj]
 
-            # Is the item here?
-            if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
-                # Is it a container?
-                if item.GetContainer():
-                    # Is it locked?
-                    if not item.GetLocked():
-                        inside = []
-                        for item_name in self._items:
-                            if self._items[item_name].GetLocationName() == item.GetItemName():
-                                # Set new item location to current location & mark as open
-                                self._items[item_name].SetLocationName(self._location.GetLocationName())
-                                inside.append(item_name)
-                    
-                        # Mark item as open and update player
-                        self._items[obj].SetOpen(True) 
-                        print(f"You {verb} the {obj}.")
+        # Is the item here?
+        if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
+            # Is it a container?
+            if item.GetContainer():
+                # Is it locked?
+                if not item.GetLocked():
+                    inside = []
+                    for item_name in self._items:
+                        if self._items[item_name].GetLocationName() == item.GetItemName():
+                            # Set new item location to current location & mark as open
+                            self._items[item_name].SetLocationName(self._location.GetLocationName())
+                            inside.append(item_name)
                 
-                        # Tell player what was inside
-                        print(f"Inside the {obj} you find: ", end=" ")
-                        for item_name in inside:
-                            print(f"{item_name}", end=" ")
-                        print()
-                    else:
-                        print(f"You can't {verb} the {obj}. It is locked.")
+                    # Mark item as open and update player
+                    self._items[obj].SetOpen(True) 
+                    print(f"You {verb} the {obj}.")
+            
+                    # Tell player what was inside
+                    print(f"Inside the {obj} you find: ", end=" ")
+                    for item_name in inside:
+                        print(f"{item_name}", end=" ")
+                    print()
                 else:
-                    # Nope, not a container
-                    print(f"You can't {verb} the {obj}!")
+                    print(f"You can't {verb} the {obj}. It is locked.")
             else:
-                # Nope, not here
-                print(f"I don't see a {obj} anywhere!")
+                # Nope, not a container
+                print(f"You can't {verb} the {obj}!")
         else:
-            # Nope,
-            print(f"Sorry, I don't understand what you want to {verb}...")
+            # Nope, not here
+            print(f"I don't see a {obj} anywhere!")
 
 
     def Open(self, command):
@@ -481,8 +496,8 @@ class Game(object):
             # Yep, player is trying to open an item
             self.OpenItem(command)
         else:
-            # Is the player trying to open a blocked exit?
-            pass
+            # Nope,
+            print(f"Sorry, I don't understand what you want to {verb}...")
 
 
     def Close(self, command):

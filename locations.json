@@ -9,7 +9,7 @@
         "blocked_exit": {
             "name": "trapdoor",
             "desc": "a trapdoor. It looks pretty sturdy. There doesn't seem to be a handle to open it with.",
-            "alt_desc": "A broken trapdoor. There is room to squeeze through the broken planks.",
+            "alt_desc": "A broken trapdoor. There is just room to squeeze through the broken planks.",
             "reason": "there is nothing you can grab to open it with.",
             "down": "cabin_basement",
             "verb": "break",
