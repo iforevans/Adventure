@@ -549,7 +549,7 @@ class Game(object):
                             item.SetOpen(False)
                             print(f"You {verb} the {obj}")
                         else:
-                            # Item is closed
+                            # Closed already
                             print(f"The {obj} is already closed.")
                     else:
                         # Not a container
