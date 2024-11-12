@@ -559,6 +559,37 @@ class Game(object):
             # Nope,
             print(f"Sorry, I don't understand what you want to {verb}...")
 
+    def Lock(self, command):
+        verb = command.GetVerb()
+        obj = command.GetObject()
+
+        # Did we get a valid object name?
+        if obj is not None:
+            # Yep, get the item
+            item = self._items[obj]
+
+            # Is the item present?
+            if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
+                # Yep, is it a container?
+                if item.GetContainer():
+                    # Is it open?
+                    if not item.GetOpen():
+                        item.SetLocked(True)
+                        print(f"You {verb} the {obj}")
+                    else:
+                        # Nope
+                        print(f"You can't {verb} the {obj} while it is open.")
+                else:
+                    # Nope, not a container
+                    print(f"You can't {verb} the {obj}!")
+
+            else:
+                # Nope, not here
+                print(f"I don't see a {obj} anywhere!")
+        else:
+            # Nope,
+            print(f"Sorry, I don't understand what you want to {verb}...")
+
     def Unlock(self, command):
         verb = command.GetVerb()
         obj = command.GetObject()
@@ -607,39 +638,44 @@ class Game(object):
             # Nope,
             print(f"Sorry, I don't understand what you want to {verb}...")
 
-    def Lock(self, command):
+    def HitItem(self, command):
         verb = command.GetVerb()
         obj = command.GetObject()
 
+        # Just do this for now
+        print(f"You {verb} the {obj}. That was a waste of time, nothing happened.")
+        
+    def HitBlockedExit(self, command):
+        verb = command.GetVerb()
+        obj = command.GetObject()
+
+        # Just do this for now
+        print(f"You {verb} the {obj}. That was a waste of time, nothing happened.")
+
+    def Hit(self, command):
+        verb = command.GetVerb()
+        obj = command.GetObject()
+        prep = command.GetPreposition()
+        target = command.GetTarget()
+
         # Did we get a valid object name?
         if obj is not None:
-            # Yep, get the item
-            item = self._items[obj]
-
-            # Is the item present?
-            if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
-                # Yep, is it a container?
-                if item.GetContainer():
-                    # Is it open?
-                    if not item.GetOpen():
-                        item.SetLocked(True)
-                        print(f"You {verb} the {obj}")
-                    else:
-                        # Nope
-                        print(f"You can't {verb} the {obj} while it is open.")
-                else:
-                    # Nope, not a container
-                    print(f"You can't {verb} the {obj}!")
-
+            # Player is trying to hit an item?
+            if self._parser.IsItem(obj):
+                # Yep
+                self.HitItem(command)
+            # Player is trying to hit a blocked exit?
+            elif self._parser.IsBlockedExit(obj):
+                # Yep,
+                self.HitBlockedExit(command)
             else:
-                # Nope, not here
-                print(f"I don't see a {obj} anywhere!")
+                # Player must be trying to hit a direction
+                print(f"You want to {verb} what? That makes no sense")
         else:
             # Nope,
             print(f"Sorry, I don't understand what you want to {verb}...")
 
-    def Hit(self, command):
-        pass
+
 
     def DoCommand(self, command):
         # Do this just once. DRY.
