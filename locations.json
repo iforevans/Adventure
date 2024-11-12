@@ -9,13 +9,31 @@
         "blocked_exit": {
             "name": "trapdoor",
             "desc": "a trapdoor. It looks pretty sturdy. There doesn't seem to be a handle to open it with.",
-            "alt_desc": "A broken trapdoor. There is just room to squeeze through the broken planks.",
+            "alt_desc": "a broken trapdoor. There is just room to squeeze through the broken planks.",
             "effect": "There is a satisfying crunch as the sledgehammer smashes into the trapdoor, breaking some of it's planks.",
             "exits": {
                 "down": "cabin_basement"
             },
             "verb": "hit",
             "target": "sledgehammer"
+        }
+    },
+    {
+        "name": "cabin_basement",
+        "description": "You are in a small, muddy basement. It's more of a large hole, really.",
+        "start_location" : false,
+        "exits": {
+            "up": "inside_cabin"
+        }
+    },
+    {
+        "name": "outside_cabin",
+        "description": "You are outside a small, wooden cabin in the forest. There is a tree here that looks climable!",
+        "start_location" : false,
+        "exits": {
+            "in": "inside_cabin",
+            "up": "top_of_tree",
+            "south": "overgrown_path"
         }
     },
     {
