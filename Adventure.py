@@ -209,8 +209,8 @@ class Parser(object):
         # Valid verbs
         self._verbs = [
             'go', 'get', 'drop', 'examine', 'inventory',
-            'unlock', 'lock', 'open', 'close', 'attack',
-            'put', 'take', 'help', 'quit'
+            'unlock', 'lock', 'open', 'close', 'break',
+            'smash', 'hit', 'help', 'quit'
         ]
         
         # Valid directions
@@ -276,7 +276,7 @@ class Parser(object):
                 obj = word
             elif not prep and word in self._prepositions:
                 prep = word
-            elif prep and not target and (word in self._objects or word in self._directions):
+            elif prep and not target and (word in self._item_names or word in self._blocked_exit_names):
                 target = word
 
         # Return parsed user input as a command object
@@ -602,7 +602,7 @@ class Game(object):
                 else:
                     print(f"Sorry, how do you want to {verb} the {obj}?")
             else:
-                print(f"Sorry, I don't understand what you want to use to {verb} the {obj}.")
+                print(f"Sorry, I don't understand. What do you want to use to {verb} the {obj}?")
         else:
             # Nope,
             print(f"Sorry, I don't understand what you want to {verb}...")
