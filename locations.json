@@ -9,8 +9,8 @@
         "blocked_exit": {
             "name": "trapdoor",
             "desc": "a trapdoor. It looks pretty sturdy. There doesn't seem to be a handle to open it with.",
-            "alt_desc": "a broken trapdoor. There is just room to squeeze through the broken planks.",
-            "effect": "There is a satisfying crunch as the sledgehammer smashes into the trapdoor, breaking some of it's planks.",
+            "alt_desc": "a broken trapdoor. There is just enough room to squeeze through the broken planks.",
+            "effect": "There is a satisfying crunch as the sledgehammer smashes into the trapdoor, breaking some planks.",
             "exits": {
                 "down": "cabin_basement"
             },

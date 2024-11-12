@@ -519,7 +519,7 @@ class Game(object):
         # Did we get a valid object name?
         if obj is not None:
             # Yep. Is it an item?
-            if obj in self._items:
+            if self._parser.IsItem(obj):
                 # Yep, deal with it.
                 self.OpenItem(command)
             else:
@@ -535,28 +535,33 @@ class Game(object):
 
         # Did we get a valid object name?
         if obj is not None:
-            # Yep, get the item
-            item = self._items[obj]
+            # Yep, now, is it an item?
+            if self._parser.IsItem(obj):
+                # Yep, get the item
+                item = self._items[obj]
 
-            # Is the item present?
-            if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
-                # Yep, is it a container?
-                if item.GetContainer():
-                    # Is it open?
-                    if item.GetOpen():
-                        item.SetOpen(False)
-                        print(f"You {verb} the {obj}")
+                # Is the item present?
+                if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
+                    # Yep, is it a container?
+                    if item.GetContainer():
+                        # Is it open?
+                        if item.GetOpen():
+                            item.SetOpen(False)
+                            print(f"You {verb} the {obj}")
+                        else:
+                            # Item is closed
+                            print(f"The {obj} is already closed.")
                     else:
-                        print(f"The {obj} is already closed.")
+                        # Not a container
+                        print(f"You can't {verb} the {obj}!")
                 else:
-                    # Nope, not a container
-                    print(f"You can't {verb} the {obj}!")
-
+                    # Not here
+                    print(f"I don't see a {obj} anywhere!")
             else:
-                # Nope, not here
-                print(f"I don't see a {obj} anywhere!")
+                # Not an item
+                print(f"You can't {verb} a {obj}")
         else:
-            # Nope,
+            # Unknown object,
             print(f"Sorry, I don't understand what you want to {verb}...")
 
     def Lock(self, command):
