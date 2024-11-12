@@ -75,8 +75,8 @@ class Location(object):
             # Doesn't look good for the player!
             print("Uh ho. There doesn't seem to be any way out of here!")
         
-        # Any blocked exits?
-        if self._blocked_exit is not None:
+        # Is there a blocked exit?
+        if len(self._blocked_exit) > 0:
             # Yep
             print(f"There is also {self._blocked_exit["desc"]}")
             
@@ -225,7 +225,7 @@ class Parser(object):
             'using', 'into'
         ]
 
-        # These list will hold valid names of things in our world
+        # These lists will hold valid names of things in our world
         self._item_names = []
         self._blocked_exit_names = []
 
