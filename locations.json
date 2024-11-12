@@ -10,10 +10,12 @@
             "name": "trapdoor",
             "desc": "a trapdoor. It looks pretty sturdy. There doesn't seem to be a handle to open it with.",
             "alt_desc": "A broken trapdoor. There is just room to squeeze through the broken planks.",
-            "reason": "there is nothing you can grab to open it with.",
-            "down": "cabin_basement",
-            "verb": "break",
-            "object": "sledgehammer"
+            "effect": "There is a satisfying crunch as the sledgehammer smashes into the trapdoor, breaking some of it's planks.",
+            "exits": {
+                "down": "cabin_basement"
+            },
+            "verb": "hit",
+            "target": "sledgehammer"
         }
     },
     {

@@ -48,7 +48,7 @@ class Location(object):
     def GetBlockedExit(self):
         return self._blocked_exit
     
-    def SetExit(self, direction, name):
+    def AddExit(self, direction, name):
         self._exits[direction] = name
 
     # Get & Set Start Location 
@@ -339,7 +339,7 @@ class Game(object):
                 # Yep, so add it
                 exits_dict = location_dict["exits"]
                 for exit_name in exits_dict:
-                    location.SetExit(exit_name, exits_dict[exit_name])
+                    location.AddExit(exit_name, exits_dict[exit_name])
 
             # Is there a blocked exit for this location?
             if "blocked_exit" in location_dict:
@@ -648,9 +648,33 @@ class Game(object):
     def HitBlockedExit(self, command):
         verb = command.GetVerb()
         obj = command.GetObject()
+        prep = command.GetPreposition()
+        target = command.GetTarget()
 
-        # Just do this for now
-        print(f"You {verb} the {obj}. That was a waste of time, nothing happened.")
+        # Is the exit the player is trying to hit even here?
+        blocked_exit_dict = self._location.GetBlockedExit()
+        if "name" in blocked_exit_dict and blocked_exit_dict["name"] == obj:
+            # Yep, valid prep?
+            if prep == "with" or prep == "using":
+                # Is the player using the right item?
+                if target == blocked_exit_dict["target"]:
+                    # Yep. Add new exits
+                    exits = blocked_exit_dict["exits"]
+                    for direction in exits:
+                        self._location.AddExit(direction, exits[direction])
+
+                    # Update blocked exit description
+                    blocked_exit_dict["desc"] = blocked_exit_dict["alt_desc"]
+
+                    # Update player
+                    effect = blocked_exit_dict["effect"]
+                    print(f"You {verb} the {obj}. {effect}")
+                else:
+                    print(f"You {verb} the {obj}. It has no effect.")
+            else:
+                print(f"Sorry, how do you want to {verb} the {obj}?")
+        else:
+            print(f"I don't see a {obj} here for you to {verb}...")
 
     def Hit(self, command):
         verb = command.GetVerb()
@@ -674,7 +698,6 @@ class Game(object):
         else:
             # Nope,
             print(f"Sorry, I don't understand what you want to {verb}...")
-
 
 
     def DoCommand(self, command):
