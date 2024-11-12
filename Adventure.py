@@ -567,6 +567,7 @@ class Game(object):
     def Lock(self, command):
         verb = command.GetVerb()
         obj = command.GetObject()
+        target = command.GetTarget()
 
         # Did we get a valid object name?
         if obj is not None:
@@ -579,20 +580,30 @@ class Game(object):
                 if item.GetContainer():
                     # Is it open?
                     if not item.GetOpen():
-                        item.SetLocked(True)
-                        print(f"You {verb} the {obj}")
+                        # Is the target item here?
+                        target_item = self._items[target]
+                        if target_item.GetLocationName() == self._location.GetLocationName() or target_item.GetLocationName() == L_CARRIED:
+                            # is the target the right item to unlock the item?
+                            if item.GetRequiresToUnlock() == target:
+                                # Yep. Lock!
+                                item.SetLocked(True)
+                                print(f"You {verb} the {obj}")
+                            else:
+                                print(f"You can't {verb} the {obj} with the {target}")
+                        else:
+                            # Target not here
+                            print(f"I don't see a {target} here ...")
                     else:
-                        # Nope
+                        # Can't lock while open
                         print(f"You can't {verb} the {obj} while it is open.")
                 else:
-                    # Nope, not a container
+                    # Not a container
                     print(f"You can't {verb} the {obj}!")
-
             else:
-                # Nope, not here
+                # Item not here
                 print(f"I don't see a {obj} anywhere!")
         else:
-            # Nope,
+            # No valid object
             print(f"Sorry, I don't understand what you want to {verb}...")
 
     def Unlock(self, command):
