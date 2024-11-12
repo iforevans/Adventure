@@ -638,6 +638,8 @@ class Game(object):
             # Nope,
             print(f"Sorry, I don't understand what you want to {verb}...")
 
+    def Hit(self, command):
+        pass
 
     def DoCommand(self, command):
         # Do this just once. DRY.
@@ -647,6 +649,8 @@ class Game(object):
         # (Not using match/case here as it requires >= 3.10)
         if verb == "go":
             self.Go(command)
+        if verb == 'hit' or verb == "break":
+            self.Hit(command)
         elif verb == "get":
             self.Get(command)
         elif verb == "drop":
