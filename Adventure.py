@@ -524,7 +524,6 @@ class Game(object):
                 self.OpenItem(command)
             else:
                 # Nope can't open that
-                # TODO
                 print(f"You can't {verb} the {obj}...")
         else:
             # Nope,
