@@ -63,7 +63,12 @@ class Location(object):
         # print the location description
         print(f"\n{self._description}")
  
-        # Any exits?
+        # Is there a blocked exit?
+        if len(self._blocked_exit) > 0:
+            # Yep
+            print(f"There is {self._blocked_exit["desc"]}")
+        
+        # Any normal exits?
         if len(self._exits) > 0:
             # Yep, so list exits
             print(f"Possible exits are:", end=" ")
@@ -73,12 +78,7 @@ class Location(object):
         else:
             # No exits. Doesn't look good for the player!
             print("Uh ho. There doesn't seem to be any way out of here!")
-        
-        # Is there a blocked exit?
-        if len(self._blocked_exit) > 0:
-            # Yep
-            print(f"There is also {self._blocked_exit["desc"]}")
-            
+                    
     # Get the location name
     def GetLocationName(self):
         return self._name
