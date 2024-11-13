@@ -614,6 +614,7 @@ class Game(object):
 
         # Did we get a valid object name?
         if obj is not None:
+            # Valid target?
             if target is not None:
                 # Yep, valid prep?
                 if prep == "with" or prep == "using":
@@ -634,24 +635,27 @@ class Game(object):
                                         item.SetLocked(False)
                                         print(f"You {verb} the {obj}.")
                                     else:
-                                        print(f"You can't {verb} the {obj} with the {target}")
+                                        # Wrong item to unlock
+                                        print(f"You can't {verb} the {obj} with the {target}...")
                                 else:
-                                    # Nope, not here
+                                    # Target item not here
                                     print(f"I don't see a {target} anywhere!")
                             else:
-                                print(f"You can't {verb} the {obj}. It's already been done.")
+                                # Item already unlocked
+                                print(f"You can't {verb} a {verb}ed {obj}..")
                         else:
-                            # Nope, not a container
+                            # Not a container
                             print(f"You can't {verb} the {obj}!")
                     else:
-                        # Nope, not here
+                        # Item to be unlocked is not here
                         print(f"I don't see a {obj} anywhere!")
                 else:
                     print(f"Sorry, how do you want to {verb} the {obj}?")
             else:
+                # No target specified
                 print(f"Sorry, I don't understand. What do you want to use to {verb} the {obj}?")
         else:
-            # Nope,
+            # No valid verb
             print(f"Sorry, I don't understand what you want to {verb}...")
 
     def HitItem(self, command):
