@@ -185,23 +185,10 @@ class Item(object):
 
 class Command(object):
     def __init__(self, verb, obj, prep, target):
-        self._verb = verb
-        self._obj = obj
-        self._prep = prep
-        self._target = target
-
-    # Getters & Setters
-    def GetVerb(self):
-        return self._verb
-
-    def GetObject(self):
-        return self._obj
-
-    def GetPreposition(self):
-        return self._prep
-
-    def GetTarget(self):
-        return self._target
+        self.verb = verb
+        self.obj = obj
+        self.prep = prep
+        self.target = target
 
 class Parser(object):
     def __init__(self):
@@ -361,61 +348,52 @@ class Game(object):
 
     # Move in a valid direction
     def Go(self, command):
-        verb = command.GetVerb()
-        obj = command.GetObject()
-
         # Assume the object is the direction
-        if obj is not None:
+        if command.obj is not None:
             # Yep, try and move in that direction
-            new_location_name = self._location.Move(obj)
+            new_location_name = self._location.Move(command.obj)
             if new_location_name is not None:
                 self._location = self._map[new_location_name]
             else:
                 # Not a valid direction
-                print(f"You can't {verb} {obj}!")
+                print(f"You can't {command.verb} {command.obj}!")
         else:
             # No obj specified
-            print(f"Sorry, I don't understand where you want to {verb}...")
+            print(f"Sorry, I don't understand where you want to {command.verb}...")
 
     # Get an item
     def Get(self, command):
-        verb = command.GetVerb()
-        obj = command.GetObject()
-
         # Did we get a valid object name?
-        if obj is not None:
+        if command.obj is not None:
             # Yep, are we trying to get a valid item?
-            if self._parser.IsItem(obj):
-                item = self._items[obj]
+            if self._parser.IsItem(command.obj):
+                item = self._items[command.obj]
                 if item.GetLocationName() == self._location.GetLocationName():
                     # Yep, present. Now, is it getable?
                     if item.GetGetable():
                         item.SetLocationName(L_CARRIED)
-                        print(f"You {verb} the {obj}")
+                        print(f"You {command.verb} the {command.obj}")
                     else:
                         # Item not gettable
-                        print(f"You can't {verb} the {obj}...")
+                        print(f"You can't {command.verb} the {command.obj}...")
                 else:
                     # Item not present
-                    print(f"I don't see a {obj} here!")
+                    print(f"I don't see the {command.obj} here!")
             else:
                 # Not an item
-                print(f"You can't {verb} the {obj}...")
+                print(f"You can't {command.verb} the {command.obj}...")
         else:
             # No valid obj
-            print(f"Sorry, I don't understand what you want to {verb}...")
+            print(f"Sorry, I don't understand what you want to {command.verb}...")
 
     # Drop an item
     def Drop(self, command):
-        verb = command.GetVerb()
-        obj = command.GetObject()
-
         # Do we have a valid object
-        if obj is not None:
+        if command.obj is not None:
             # Yep, is it a valid item?
-            if obj in self._items:
+            if command.obj in self._items:
                 # Yep, 
-                item = self._items[obj]
+                item = self._items[command.obj]
 
                 # Are we carrying it?
                 if item.GetLocationName() == L_CARRIED:
@@ -423,41 +401,38 @@ class Game(object):
                     item.SetLocationName(self._location.GetLocationName())
                 else:
                     # Item not carried
-                    print(f"You are not carrying the {item.GetItemName()}!")
+                    print(f"You are not carrying the {command.obj}!")
             else:
                 # Not a valid item
-                print(f"You can't {verb} the {obj}...")
+                print(f"You can't {command.verb} the {command.obj}...")
         else:
             # No valid obj
-            print(f"Sorry, I don't understand what you want to {verb} ...")
+            print(f"Sorry, I don't understand what you want to {command.verb} ...")
 
     # Examine an item
     def Examine(self, command):
-        verb = command.GetVerb()
-        obj = command.GetObject()
-
         # Did we get a valid object name?
-        if obj is not None:
+        if command.obj is not None:
             # Yep, is it an item?
-            if self._parser.IsItem(obj):
+            if self._parser.IsItem(command.obj):
                 # It's an item
-                item = self._items[obj]
+                item = self._items[command.obj]
                 if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
                     # Yep, print the longer description
-                    print(f"You {verb} the {obj}, and see: {item.GetDescription()}")
+                    print(f"You {command.verb} the {command.obj}, and see: {item.GetDescription()}")
                 else:
                     # Nope, not here
-                    print(f"I don't see a {obj} anywhere!")
+                    print(f"I don't see a {command.obj} anywhere!")
             # Is it a direction?
-            elif self._parser.IsDirection(obj):
+            elif self._parser.IsDirection(command.obj):
                 # Yep, strange request, but you never know
-                print(f"You want to {verb} {obj}? Weird ...")
+                print(f"You want to {command.verb} {command.obj}? Weird ...")
             else:
                 # Fallback feedback
-                print(f"You {verb} the {obj} but don't see extra details...")
+                print(f"You {command.verb} the {command.obj} but don't see extra details...")
         else:
             # No valid obj
-            print(f"Sorry, I don't understand what you want to {verb}...")
+            print(f"Sorry, I don't understand what you want to {command.verb}...")
 
     def GetCarriedItems(self):
         # Build list of all the items we are carrying
@@ -482,11 +457,8 @@ class Game(object):
             print("You are not carrying anything!")
 
     def OpenItem(self, command):
-        verb = command.GetVerb()
-        obj = command.GetObject()
-
         # Get a handle to the requested item
-        item = self._items[obj]
+        item = self._items[command.obj]
 
         # Is the item here?
         if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
@@ -503,51 +475,45 @@ class Game(object):
                             inside.append(item_name)
                 
                     # Mark item as open and update player
-                    self._items[obj].SetOpen(True) 
-                    print(f"You {verb} the {obj}.")
+                    self._items[command.obj].SetOpen(True) 
+                    print(f"You {command.verb} the {command.obj}.")
             
                     # Tell player what was inside
-                    print(f"Inside the {obj} you find: ", end=" ")
+                    print(f"Inside the {command.obj} you find: ", end=" ")
                     for item_name in inside:
                         print(f"{item_name}", end=" ")
                     print()
                 else:
                     # Item already locked
-                    print(f"You can't {verb} the {obj}. It is locked.")
+                    print(f"You can't {command.verb} the {command.obj}. It is locked.")
             else:
                 # Item not a container
-                print(f"You can't {verb} the {obj}!")
+                print(f"You can't {command.verb} the {command.obj}!")
         else:
             # Item not here
-            print(f"I don't see a {obj} anywhere!")
+            print(f"I don't see a {command.obj} anywhere!")
 
     def Open(self, command):
-        verb = command.GetVerb()
-        obj = command.GetObject()
-
         # Did we get a valid object name?
-        if obj is not None:
+        if command.obj is not None:
             # Yep. Is it an item?
-            if self._parser.IsItem(obj):
+            if self._parser.IsItem(command.obj):
                 # Yep, deal with it.
                 self.OpenItem(command)
             else:
                 # Nope can't open that
-                print(f"You can't {verb} the {obj}...")
+                print(f"You can't {command.verb} the {command.obj}...")
         else:
             # Nope,
-            print(f"Sorry, I don't understand what you want to {verb}...")
+            print(f"Sorry, I don't understand what you want to {command.verb}...")
 
     def Close(self, command):
-        verb = command.GetVerb()
-        obj = command.GetObject()
-
         # Did we get a valid object name?
-        if obj is not None:
+        if command.obj is not None:
             # Yep, now, is it an item?
-            if self._parser.IsItem(obj):
+            if self._parser.IsItem(command.obj):
                 # Yep, get the item
-                item = self._items[obj]
+                item = self._items[command.obj]
 
                 # Is the item present?
                 if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
@@ -556,32 +522,28 @@ class Game(object):
                         # Is it open?
                         if item.GetOpen():
                             item.SetOpen(False)
-                            print(f"You {verb} the {obj}")
+                            print(f"You {command.verb} the {command.obj}")
                         else:
                             # Closed already
-                            print(f"The {obj} is already closed.")
+                            print(f"The {command.obj} is already closed.")
                     else:
                         # Not a container
-                        print(f"You can't {verb} the {obj}!")
+                        print(f"You can't {command.verb} the {command.obj}!")
                 else:
                     # Not here
-                    print(f"I don't see a {obj} anywhere!")
+                    print(f"I don't see a {command.obj} anywhere!")
             else:
                 # Not an item
-                print(f"You can't {verb} a {obj}")
+                print(f"You can't {command.verb} a {command.obj}")
         else:
             # Unknown object,
-            print(f"Sorry, I don't understand what you want to {verb}...")
+            print(f"Sorry, I don't understand what you want to {command.verb}...")
 
     def Lock(self, command):
-        verb = command.GetVerb()
-        obj = command.GetObject()
-        target = command.GetTarget()
-
         # Did we get a valid object name?
-        if obj is not None:
+        if command.obj is not None:
             # Yep, get the item
-            item = self._items[obj]
+            item = self._items[command.obj]
 
             # Is the item present?
             if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
@@ -590,44 +552,39 @@ class Game(object):
                     # Is it open?
                     if not item.GetOpen():
                         # Is the target item here?
-                        target_item = self._items[target]
+                        target_item = self._items[command.target]
                         if target_item.GetLocationName() == self._location.GetLocationName() or target_item.GetLocationName() == L_CARRIED:
                             # is the target the right item to unlock the item?
-                            if item.GetRequiresToUnlock() == target:
+                            if item.GetRequiresToUnlock() == command.target:
                                 # Yep. Lock!
                                 item.SetLocked(True)
-                                print(f"You {verb} the {obj}")
+                                print(f"You {command.verb} the {command.obj}")
                             else:
-                                print(f"You can't {verb} the {obj} with the {target}")
+                                print(f"You can't {command.verb} the {command.obj} with the {command.target}")
                         else:
                             # Target not here
-                            print(f"I don't see a {target} here ...")
+                            print(f"I don't see a {command.target} here ...")
                     else:
                         # Can't lock while open
-                        print(f"You can't {verb} the {obj} while it is open.")
+                        print(f"You can't {command.verb} the {command.obj} while it is open.")
                 else:
                     # Not a container
-                    print(f"You can't {verb} the {obj}!")
+                    print(f"You can't {command.verb} the {command.obj}!")
             else:
                 # Item not here
-                print(f"I don't see a {obj} anywhere!")
+                print(f"I don't see a {command.obj} anywhere!")
         else:
             # No valid object
-            print(f"Sorry, I don't understand what you want to {verb}...")
+            print(f"Sorry, I don't understand what you want to {command.verb}...")
 
     def Unlock(self, command):
-        verb = command.GetVerb()
-        obj = command.GetObject()
-        prep = command.GetPreposition()
-        target = command.GetTarget()
-
         # Did we get a valid object name?
-        if obj is not None:
+        if command.obj is not None:
             # Valid target?
-            if target is not None:
+            if command.target is not None:
                 # Yep, valid prep?
-                if prep == "with" or prep == "using":
-                    item = self._items[obj]
+                if command.prep == "with" or command.prep == "using":
+                    item = self._items[command.obj]
 
                     # Is the item here?
                     if item.GetLocationName() == self._location.GetLocationName() or item.GetLocationName() == L_CARRIED:
@@ -636,57 +593,49 @@ class Game(object):
                             # Yep. Is it locked?
                             if item.GetLocked():
                                 # Is the target item here?
-                                target_item = self._items[target]
+                                target_item = self._items[command.target]
                                 if target_item.GetLocationName() == self._location.GetLocationName() or target_item.GetLocationName() == L_CARRIED:
                                     # is the target the right item to unlock the item?
-                                    if item.GetRequiresToUnlock() == target:
+                                    if item.GetRequiresToUnlock() == command.target:
                                         # Yep, so unlock
                                         item.SetLocked(False)
-                                        print(f"You {verb} the {obj}.")
+                                        print(f"You {command.verb} the {command.obj}.")
                                     else:
                                         # Wrong item to unlock
-                                        print(f"You can't {verb} the {obj} with the {target}...")
+                                        print(f"You can't {command.verb} the {command.obj} with the {command.target}...")
                                 else:
                                     # Target item not here
-                                    print(f"I don't see a {target} anywhere!")
+                                    print(f"I don't see a {command.target} anywhere!")
                             else:
                                 # Item already unlocked
-                                print(f"You can't {verb} a {verb}ed {obj}..")
+                                print(f"You can't {command.verb} a {command.verb}ed {command.obj}..")
                         else:
                             # Not a container
-                            print(f"You can't {verb} the {obj}!")
+                            print(f"You can't {command.verb} the {command.obj}!")
                     else:
                         # Item to be unlocked is not here
-                        print(f"I don't see a {obj} anywhere!")
+                        print(f"I don't see a {command.obj} anywhere!")
                 else:
-                    print(f"Sorry, how do you want to {verb} the {obj}?")
+                    print(f"Sorry, how do you want to {command.verb} the {command.obj}?")
             else:
                 # No target specified
-                print(f"Sorry, I don't understand. What do you want to use to {verb} the {obj}?")
+                print(f"Sorry, I don't understand. What do you want to use to {command.verb} the {command.obj}?")
         else:
             # No valid verb
-            print(f"Sorry, I don't understand what you want to {verb}...")
+            print(f"Sorry, I don't understand what you want to {command.verb}...")
 
     def HitItem(self, command):
-        verb = command.GetVerb()
-        obj = command.GetObject()
-
         # Just do this for now
-        print(f"You {verb} the {obj}. That was a waste of time, nothing happened.")
+        print(f"You {command.verb} the {command.obj}. That was a waste of time, nothing happened.")
         
     def HitBlockedExit(self, command):
-        verb = command.GetVerb()
-        obj = command.GetObject()
-        prep = command.GetPreposition()
-        target = command.GetTarget()
-
         # Is the exit the player is trying to hit even here?
         blocked_exit_dict = self._location.GetBlockedExit()
-        if "name" in blocked_exit_dict and blocked_exit_dict["name"] == obj:
+        if "name" in blocked_exit_dict and blocked_exit_dict["name"] == command.obj:
             # Yep, valid prep?
-            if prep == "with" or prep == "using":
+            if command.prep == "with" or command.prep == "using":
                 # Is the player using the right item?
-                if target == blocked_exit_dict["target"]:
+                if command.target == blocked_exit_dict["target"]:
                     # Yep. Add new exits
                     exits = blocked_exit_dict["exits"]
                     for direction in exits:
@@ -697,64 +646,56 @@ class Game(object):
 
                     # Update player
                     effect = blocked_exit_dict["effect"]
-                    print(f"You {verb} the {obj}. {effect}")
+                    print(f"You {command.verb} the {command.obj}. {effect}")
                 else:
                     # Incorrect target specified to unblock
-                    print(f"You {verb} the {obj}. It has no effect.")
+                    print(f"You {command.verb} the {command.obj}. It has no effect.")
             else:
                 # Invalid prep specified
-                print(f"Sorry, how do you want to {verb} the {obj}?")
+                print(f"Sorry, how do you want to {command.verb} the {command.obj}?")
         else:
             # Blocked exit not here
-            print(f"I don't see a {obj} here for you to {verb}...")
+            print(f"I don't see a {command.obj} here for you to {command.verb}...")
 
     def Hit(self, command):
-        verb = command.GetVerb()
-        obj = command.GetObject()
-        prep = command.GetPreposition()
-        target = command.GetTarget()
-
         # Did we get a valid object name?
-        if obj is not None:
+        if command.obj is not None:
             # Player is trying to hit an item?
-            if self._parser.IsItem(obj):
+            if self._parser.IsItem(command.obj):
                 self.HitItem(command)
             # Player is trying to hit a blocked exit?
-            elif self._parser.IsBlockedExit(obj):
+            elif self._parser.IsBlockedExit(command.obj):
                 self.HitBlockedExit(command)
             else:
                 # Not an item or a blocked exit
-                print(f"You want to {verb} what? That makes no sense")
+                print(f"You want to {command.verb} what? That makes no sense")
         else:
             # No valid obj specified
-            print(f"Sorry, I don't understand what you want to {verb}...")
+            print(f"Sorry, I don't understand what you want to {command.verb}...")
 
 
     def DoCommand(self, command):
-        # Do this just once. DRY.
-        verb = command.GetVerb()
-
         # What's our verb
         # (Not using match/case here as it requires >= 3.10)
-        if verb == "go":
+        if command.verb == "go":
             self.Go(command)
-        if verb == 'hit' or verb == "break":
+        if command.verb == 'hit' or command.verb == "break":
             self.Hit(command)
-        elif verb == "get":
+        elif command.verb == "get":
             self.Get(command)
-        elif verb == "drop":
+        elif command.verb == "drop":
             self.Drop(command)
-        elif verb == "open":
+        elif command.verb == "open":
             self.Open(command)
-        elif verb == "close":
+        elif command.verb == "close":
             self.Close(command)
-        elif verb == "lock":
+        elif command.verb == "lock":
             self.Lock(command)
-        elif verb == "unlock":
+        elif command.verb == "unlock":
             self.Unlock(command)
-        elif verb == "examine":
+        elif command.verb == "examine":
             self.Examine(command)
-        elif verb == "inventory":
+        elif command.verb == "inventory":
             self.Inventory()
 
     def DescribeLocation(self):
@@ -787,9 +728,9 @@ class Game(object):
             command = self._parser.ParseInput(input("What next? "))
 
             # Valid command
-            if command.GetVerb() == None:
+            if command.verb == None:
                 print("Sorry, I don't understand what you said ...")
-            elif command.GetVerb() == "quit":
+            elif command.verb == "quit":
                 print("You'll be back!")
                 self._alive = False
             else:
