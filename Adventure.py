@@ -646,7 +646,7 @@ class Game(object):
 
                     # Update player
                     effect = blocked_exit_dict["effect"]
-                    print(f"You {command.verb} the {command.obj}. {effect}")
+                    print(f"You {command.verb} the {command.obj} using the {command.target}. {effect}")
                 else:
                     # Incorrect target specified to unblock
                     print(f"You {command.verb} the {command.obj}. It has no effect.")

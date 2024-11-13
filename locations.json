@@ -1,7 +1,7 @@
 [
     {
         "name": "inside_cabin",
-        "description": "You are inside a small cabin, seems to be made of earth and wood. Through a small, dirty window you can see nothing but trees.",
+        "description": "You are inside a small cabin. It seems to be made of earth and wood. Through a small, dirty window you can see nothing but trees.",
         "start_location" : true,
         "exits": {
             "out": "outside_cabin"
@@ -10,7 +10,7 @@
             "name": "trapdoor",
             "desc": "a trapdoor. It looks pretty sturdy. There doesn't seem to be a handle to open it with.",
             "alt_desc": "a broken trapdoor. There is just enough room to squeeze through the broken planks.",
-            "effect": "There is a satisfying crunch as the sledgehammer smashes into the trapdoor, breaking some planks.",
+            "effect": "There is a satisfying crunch as the sledgehammer smashes into the trapdoor, obliterating some planks.",
             "exits": {
                 "down": "cabin_basement"
             },
