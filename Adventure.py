@@ -494,6 +494,7 @@ class Game(object):
             if item.GetContainer():
                 # Is it locked?
                 if not item.GetLocked():
+                    # Nope, Get all the stuff out
                     inside = []
                     for item_name in self._items:
                         if self._items[item_name].GetLocationName() == item.GetItemName():
@@ -511,12 +512,13 @@ class Game(object):
                         print(f"{item_name}", end=" ")
                     print()
                 else:
+                    # Item already locked
                     print(f"You can't {verb} the {obj}. It is locked.")
             else:
-                # Nope, not a container
+                # Item not a container
                 print(f"You can't {verb} the {obj}!")
         else:
-            # Nope, not here
+            # Item not here
             print(f"I don't see a {obj} anywhere!")
 
     def Open(self, command):
