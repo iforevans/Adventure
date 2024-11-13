@@ -65,14 +65,13 @@ class Location(object):
  
         # Any exits?
         if len(self._exits) > 0:
+            # Yep, so list exits
             print(f"Possible exits are:", end=" ")
             for key in self._exits:
                 print(f" {key}", end= " ")
-
-            #   Print a blank, seperator line
             print()
         else:
-            # Doesn't look good for the player!
+            # No exits. Doesn't look good for the player!
             print("Uh ho. There doesn't seem to be any way out of here!")
         
         # Is there a blocked exit?
@@ -270,12 +269,16 @@ class Parser(object):
 
         # Parse the tokens
         for word in tokens:
+            # Found a verb?
             if not verb and word in self._verbs:
                 verb = word
+            # Found object (of the sentance)?
             elif not obj and (word in self._item_names or word in self._blocked_exit_names or word in self._directions):
                 obj = word
+            # Found a preposition?
             elif not prep and word in self._prepositions:
                 prep = word
+            # Found the target?
             elif prep and not target and (word in self._item_names or word in self._blocked_exit_names):
                 target = word
 
@@ -368,8 +371,10 @@ class Game(object):
             if new_location_name is not None:
                 self._location = self._map[new_location_name]
             else:
+                # Not a valid direction
                 print(f"You can't {verb} {obj}!")
         else:
+            # No obj specified
             print(f"Sorry, I don't understand where you want to {verb}...")
 
     # Get an item
@@ -388,16 +393,17 @@ class Game(object):
                         item.SetLocationName(L_CARRIED)
                         print(f"You {verb} the {obj}")
                     else:
-                        # Nope, not getable
+                        # Item not gettable
                         print(f"You can't {verb} the {obj}...")
                 else:
-                    # Nope, not present
+                    # Item not present
                     print(f"I don't see a {obj} here!")
             else:
-                # Nope, not an item
+                # Not an item
                 print(f"You can't {verb} the {obj}...")
         else:
-                print(f"Sorry, I don't understand what you want to {verb}...")
+            # No valid obj
+            print(f"Sorry, I don't understand what you want to {verb}...")
 
     # Drop an item
     def Drop(self, command):
@@ -406,7 +412,7 @@ class Game(object):
 
         # Do we have a valid object
         if obj is not None:
-            # Yep, is it a valid item
+            # Yep, is it a valid item?
             if obj in self._items:
                 # Yep, 
                 item = self._items[obj]
@@ -416,13 +422,13 @@ class Game(object):
                     # Yep, so set the item's locstion to the current location
                     item.SetLocationName(self._location.GetLocationName())
                 else:
-                    # Nope, don't have it
-                    print(f"You are not carrying a {item.GetItemName()}!")
+                    # Item not carried
+                    print(f"You are not carrying the {item.GetItemName()}!")
             else:
-                # Nope, not an item
+                # Not a valid item
                 print(f"You can't {verb} the {obj}...")
         else:
-            # Nope, no valid object specified
+            # No valid obj
             print(f"Sorry, I don't understand what you want to {verb} ...")
 
     # Examine an item
@@ -444,12 +450,13 @@ class Game(object):
                     print(f"I don't see a {obj} anywhere!")
             # Is it a direction?
             elif self._parser.IsDirection(obj):
-                # Yep. 
+                # Yep, strange request, but you never know
                 print(f"You want to {verb} {obj}? Weird ...")
             else:
-                print(f"You {verb} the {obj} but don't see anything more...")
+                # Fallback feedback
+                print(f"You {verb} the {obj} but don't see extra details...")
         else:
-            # Nope,
+            # No valid obj
             print(f"Sorry, I don't understand what you want to {verb}...")
 
     def GetCarriedItems(self):
@@ -690,10 +697,13 @@ class Game(object):
                     effect = blocked_exit_dict["effect"]
                     print(f"You {verb} the {obj}. {effect}")
                 else:
+                    # Incorrect target specified to unblock
                     print(f"You {verb} the {obj}. It has no effect.")
             else:
+                # Invalid prep specified
                 print(f"Sorry, how do you want to {verb} the {obj}?")
         else:
+            # Blocked exit not here
             print(f"I don't see a {obj} here for you to {verb}...")
 
     def Hit(self, command):
@@ -706,17 +716,15 @@ class Game(object):
         if obj is not None:
             # Player is trying to hit an item?
             if self._parser.IsItem(obj):
-                # Yep
                 self.HitItem(command)
             # Player is trying to hit a blocked exit?
             elif self._parser.IsBlockedExit(obj):
-                # Yep,
                 self.HitBlockedExit(command)
             else:
-                # Player must be trying to hit a direction
+                # Not an item or a blocked exit
                 print(f"You want to {verb} what? That makes no sense")
         else:
-            # Nope,
+            # No valid obj specified
             print(f"Sorry, I don't understand what you want to {verb}...")
 
 
