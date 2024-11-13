@@ -220,7 +220,7 @@ class Parser(object):
 
         #  Valid preps
         self._prepositions = [
-            'with', 'at', 'from', 'onto',
+            'with', 'at',
             'using', 'into'
         ]
 
