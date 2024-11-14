@@ -621,8 +621,8 @@ class Game(object):
                 # No target specified
                 print(f"Sorry, I don't understand. What do you want to use to {command.verb} the {command.obj}?")
         else:
-            # No valid verb
-            print(f"Sorry, I don't understand what you want to {command.verb}...")
+            # No valid obj
+            print(f"Sorry, I don't understand what you want to {command.obj}...")
 
     def HitItem(self, command):
         # Just do this for now
