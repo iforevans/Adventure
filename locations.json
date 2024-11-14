@@ -14,7 +14,7 @@
             "exits": {
                 "down": "cabin_basement"
             },
-            "verb": "hit",
+            "verbs": ["hit", "smash", "break"],
             "target": "sledgehammer"
         }
     },
