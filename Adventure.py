@@ -348,7 +348,7 @@ class Game(object):
                     for verb in blocked_exit_dict["verbs"]:
                         self._parser.AddVerb(verb)               
 
-            # Check if this location is the start location
+            # Is this the start location?
             if location.GetStartLocation():
                 self._location = location
 
