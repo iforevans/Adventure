@@ -236,6 +236,10 @@ class Parser(object):
             return True
         return False
 
+    # Add a verb
+    def AddVerb(self, verb):
+        self._verbs.append(verb)
+
     # Add an known item
     def AddItemName(self, item_name):
         self._item_names.append(item_name)
@@ -310,7 +314,6 @@ class Game(object):
             self._items[item_dict["name"]] = item
             self._parser.AddItemName(item_dict["name"])
 
-    
     def CreateMap(self):
         # Read the locations from the JSON file
         with open(FN_LOCATIONS, 'r') as json_file:
@@ -326,7 +329,7 @@ class Game(object):
 
             # Any exits
             if "exits" in location_dict: 
-                # Yep, so add it
+                # Yep, so add them
                 exits_dict = location_dict["exits"]
                 for exit_name in exits_dict:
                     location.AddExit(exit_name, exits_dict[exit_name])
@@ -334,11 +337,17 @@ class Game(object):
             # Is there a blocked exit for this location?
             if "blocked_exit" in location_dict:
                 # Yep, add it
-                blocked_exit_dict = location_dict["blocked_exit"]
+                blocked_exit_dict = location_dict["blocked_exit"]                
                 location.SetBlockedExit(blocked_exit_dict)
+
+                # Add blocked exit name to parser
                 self._parser.AddBlockedExitName(blocked_exit_dict["name"])
 
-                
+                # Add blocked exit verbs to parser
+                if "verbs" in blocked_exit_dict:
+                    for verb in blocked_exit_dict["verbs"]:
+                        self._parser.AddVerb(verb)               
+
             # Check if this location is the start location
             if location.GetStartLocation():
                 self._location = location
