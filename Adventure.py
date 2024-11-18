@@ -66,7 +66,7 @@ class Location(object):
         # Is there a blocked exit?
         if len(self._blocked_exit) > 0:
             # Yep
-            print(f"There is {self._blocked_exit["desc"]}")
+            print(f"There is {self._blocked_exit['desc']}")
         
         # Any normal exits?
         if len(self._exits) > 0:
