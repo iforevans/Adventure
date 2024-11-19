@@ -1,7 +1,7 @@
 [
     {
         "name": "inside_cabin",
-        "description": "You are inside a small cabin. It seems to be made of earth and wood. Through a small, dirty window you can see nothing but trees.",
+        "description": "You are inside a small log cabin, it seems to be made of earth and wood. Through a small, dirty window you can see nothing but trees.",
         "start_location" : true,
         "exits": {
             "out": "outside_cabin"
