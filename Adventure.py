@@ -684,16 +684,20 @@ class Game(object):
 
 
     def DoCommand(self, command):
-        # What's our verb
-        # (Not using match/case here as it requires >= 3.10)
+        # Basic verbs
         if command.verb == "go":
             self.Go(command)
-        if command.verb == 'hit' or command.verb == "break":
-            self.Hit(command)
         elif command.verb == "get":
             self.Get(command)
         elif command.verb == "drop":
             self.Drop(command)
+        elif command.verb == "examine":
+            self.Examine(command)
+        elif command.verb == "inventory":
+            self.Inventory()
+        # Verbs that operate on items, exits, or Non Player Characters(NPCs)
+        if command.verb == 'hit' or command.verb == "break":
+            self.Hit(command)
         elif command.verb == "open":
             self.Open(command)
         elif command.verb == "close":
@@ -702,10 +706,6 @@ class Game(object):
             self.Lock(command)
         elif command.verb == "unlock":
             self.Unlock(command)
-        elif command.verb == "examine":
-            self.Examine(command)
-        elif command.verb == "inventory":
-            self.Inventory()
 
     def DescribeLocation(self):
             # Describe the location
