@@ -193,7 +193,7 @@ class Command(object):
 class Parser(object):
     def __init__(self):
         # Valid verbs
-        self._verbs = [
+        self._essential_verbs = [
             'go', 'get', 'drop', 'examine', 'inventory',
             'unlock', 'lock', 'open', 'close', 'break',
             'smash', 'hit', 'help', 'quit'
@@ -217,7 +217,7 @@ class Parser(object):
 
     # Various checks
     def IsVerb(self, obj):
-        if obj in self._verbs:
+        if obj in self._essential_verbs:
             return True
         return False
 
@@ -238,7 +238,7 @@ class Parser(object):
 
     # Add a verb
     def AddVerb(self, verb):
-        self._verbs.append(verb)
+        self._essential_verbs.append(verb)
 
     # Add an known item
     def AddItemName(self, item_name):
@@ -261,7 +261,7 @@ class Parser(object):
         # Parse the tokens
         for word in tokens:
             # Found a verb?
-            if not verb and word in self._verbs:
+            if not verb and word in self._essential_verbs:
                 verb = word
             # Found object (of the sentance)?
             elif not obj and (word in self._item_names or word in self._blocked_exit_names or word in self._directions):
@@ -684,7 +684,7 @@ class Game(object):
 
 
     def DoCommand(self, command):
-        # Basic verbs
+        # Essential verbs
         if command.verb == "go":
             self.Go(command)
         elif command.verb == "get":
